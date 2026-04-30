@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Axiom — Launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:       #0A0A0B;
+    --bg-2:     #111114;
+    --surface:  #17171B;
+    --line:     #26262C;
+    --text:     #F4F4F5;
+    --text-2:   #A1A1AA;
+    --dim:      #52525B;
+    --accent:   #00E0B8;   /* electric mint */
+    --accent-2: #7C5CFF;
+    --danger:   #FF4D6D;
+  }
+  html, body { margin: 0; background: #000; color: var(--text); font-family: "Space Grotesk", -apple-system, sans-serif; }
+
+  .slide {
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    padding: 90px 100px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide.surface { background: var(--bg-2); }
+
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+  /* Chrome */
+  .chrome-top, .chrome-bot {
+    position: absolute; left: 100px; right: 100px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    letter-spacing: 0.14em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+  .chrome-top { top: 56px; }
+  .chrome-bot { bottom: 56px; }
+  .wordmark { display: inline-flex; align-items: center; gap: 12px; color: var(--text); }
+  .wordmark .dot {
+    width: 12px; height: 12px; background: var(--accent);
+    box-shadow: 0 0 16px var(--accent);
+    border-radius: 2px;
+    transform: rotate(45deg);
+  }
+  .chrome-top::after, .chrome-bot::before {
+    content: ""; position: absolute; left: 0; right: 0;
+    height: 1px; background: var(--line);
+  }
+  .chrome-top::after { bottom: -24px; }
+  .chrome-bot::before { top: -24px; }
+
+  /* Type */
+  h1.hero {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 500;
+    font-size: 180px;
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    margin: 0;
+  }
+  h2.big {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 500;
+    font-size: 110px;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h3.med {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .body {
+    font-size: 28px;
+    line-height: 1.42;
+    color: var(--text-2);
+    text-wrap: pretty;
+    font-weight: 300;
+  }
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 18px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  em.glow {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  /* Grid overlay for first slide */
+  .gridlines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    pointer-events: none;
+  }
+
+  /* Terminal / code */
+  .term {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 20px;
+    line-height: 1.7;
+  }
+  .term .bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    background: #0E0E12;
+  }
+  .term .bar .dots { display: flex; gap: 8px; }
+  .term .bar .dots span { width: 12px; height: 12px; border-radius: 99px; background: var(--line); }
+  .term .bar .title { font-size: 14px; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; }
+  .term .body-txt { padding: 28px 32px; color: var(--text); }
+  .term .prompt { color: var(--accent); }
+  .term .k { color: var(--accent-2); }
+  .term .c { color: var(--dim); }
+  .term .s { color: #FFD27D; }
+  .term .r { color: var(--danger); }
+  .term .g { color: var(--accent); }
+
+  /* diff rows */
+  .diff-row { display: grid; grid-template-columns: 40px 1fr; align-items: baseline; padding: 2px 0; }
+  .diff-row.add { background: rgba(0,224,184,0.08); }
+  .diff-row.del { background: rgba(255,77,109,0.08); }
+  .diff-row .sign { text-align: center; color: var(--dim); }
+  .diff-row.add .sign { color: var(--accent); }
+  .diff-row.del .sign { color: var(--danger); }
+
+  /* chips */
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 99px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-2);
+  }
+  .chip.on { border-color: var(--accent); color: var(--accent); }
+  .chip::before {
+    content: ""; width: 6px; height: 6px; border-radius: 99px; background: currentColor;
+    opacity: 0.6;
+  }
+
+  /* cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 36px;
+  }
+
+  /* utility */
+  .flex { display: flex; }
+  .between { justify-content: space-between; }
+  .grid { display: grid; gap: 32px; }
+  .col-2 { grid-template-columns: 1fr 1fr; }
+  .col-3 { grid-template-columns: repeat(3, 1fr); }
+  .col-4 { grid-template-columns: repeat(4, 1fr); }
+
+  /* tweaks */
+  #tweak-panel {
+    position: fixed; right: 24px; top: 24px;
+    z-index: 9999;
+    background: rgba(17,17,20,0.96);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: none;
+    min-width: 240px;
+    backdrop-filter: blur(10px);
+  }
+  #tweak-panel[data-visible] { display: block; }
+  #tweak-panel h4 { margin: 0 0 10px; font-size: 11px; letter-spacing: 0.16em; opacity: 0.55; font-weight: 500; }
+  #tweak-panel .seg {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px; padding: 3px; gap: 2px;
+    margin-bottom: 12px;
+  }
+  #tweak-panel .seg button {
+    appearance: none; background: transparent; color: inherit;
+    border: 0; padding: 9px 8px; font: inherit; cursor: pointer;
+    border-radius: 8px;
+  }
+  #tweak-panel .seg button[aria-pressed="true"] {
+    background: var(--accent); color: #000;
+  }
+
+  /* light theme */
+  [data-theme="light"] {
+    --bg:       #F7F7F5;
+    --bg-2:     #EDEDE8;
+    --surface:  #FFFFFF;
+    --line:     #D8D8D2;
+    --text:     #0A0A0B;
+    --text-2:   #52525B;
+    --dim:      #A1A1AA;
+  }
+  [data-accent="violet"] { --accent: #7C5CFF; }
+  [data-accent="coral"] { --accent: #FF6B4A; }
+</style>
+</head>
+<body>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Hi everyone — today we're launching Axiom. Not a new AI assistant. Not another autocomplete. Axiom is an AI code reviewer that runs on every pull request, catches the bugs your team misses, and ships feedback before your reviewer even opens the tab. We've been in private beta with 140 teams for six months. Today it's generally available.",
+  "Here's the thing about code review. Every company says it's critical. Nobody's proud of how theirs works. Reviews sit in queues for days. Bugs ship anyway. Senior engineers spend two hours a day rubber-stamping changes they barely read. The loop is broken — and the industry has quietly accepted that broken as normal.",
+  "We wanted to measure that. Across the two thousand engineering teams we studied: median PR cycle time was thirty-one hours. The bottleneck was almost never the code itself. It was waiting. Waiting for a reviewer. Waiting for CI. Waiting for someone senior enough to click approve. Thirty-one hours. On every change. Compounded across a year, that's half your shipping velocity.",
+  "Introducing Axiom. It's an AI reviewer that reads your pull request the second it opens, finds the real issues — not style nits, actual correctness and security bugs — and leaves reviewer-quality comments inline. The difference is: it doesn't just flag. It explains, suggests a fix, and understands your codebase's conventions from the first PR.",
+  "A quick example. Here's a real pull request from one of our design partners. Change looks innocent — adjusting a retry loop. Axiom catches three things a human reviewer missed: an unbounded backoff, a log line that leaks a session token, and a missed cancellation check on the parent context. Each with a one-line explanation and a suggested fix. Thirteen seconds, not thirteen hours.",
+  "How does it work? Three layers. The first is a static layer — we build a full semantic graph of your repo on every commit. The second is a learned layer — fine-tuned on forty million reviewed PRs and your own team's review history. The third is the execution layer — we actually run tests and fuzzers in sandboxes to verify hypotheses. Most AI tools have only the middle one. That's why they hallucinate.",
+  "The results. Across our beta cohort — median cycle time dropped from thirty-one hours to four. Escaped defects — bugs that made it to production — fell by sixty-eight percent. And this is the one I love most: reviewer satisfaction went up. Because the humans get to do the interesting review — architecture, tradeoffs — and Axiom handles the mechanical part.",
+  "Axiom integrates with what you already use. GitHub, GitLab, Bitbucket. Slack, Linear, Jira. Your CI, your IDE. No migration, no new dashboard to live in. Fifteen-minute setup. Your first review within the hour.",
+  "Pricing. Three tiers. Starter is free for teams under ten. Team is twenty dollars per developer per month. Enterprise is custom — on-prem deployment, private model hosting, SOC 2 Type II. Every tier includes unlimited reviews. We don't charge per PR. That's a business model we don't want.",
+  "Axiom is generally available today. Every team that signs up before the end of the quarter gets three months of Team tier on the house. The loop your team has been putting up with? It can close this afternoon. Thank you."
+]
+</script>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============ 01 Cover ============ -->
+  <section data-label="Cover" class="slide" style="padding: 0; justify-content:center; align-items:flex-start;">
+    <div class="gridlines"></div>
+    <div class="chrome-top">
+      <span class="wordmark"><span class="dot"></span>AXIOM</span>
+      <span>Launch · Spring 2026</span>
+    </div>
+    <div style="padding: 0 100px; position:relative; z-index:1; margin-top: 80px;">
+      <div class="eyebrow" style="margin-bottom: 40px;">LAUNCH · 04.18.26 · GA</div>
+      <h1 class="hero" style="font-size: 340px; font-weight: 400;">Axiom<span style="color: var(--accent);">.</span></h1>
+      <div style="max-width: 1400px; margin-top: 48px; font-family: 'Space Grotesk', sans-serif; font-size: 56px; line-height: 1.12; letter-spacing: -0.02em; font-weight: 300; color: var(--text-2);">
+        The AI code reviewer that ships feedback before your reviewer opens the tab.
+      </div>
+    </div>
+    <div class="chrome-bot" style="padding: 0 100px;">
+      <span>00 · OPEN</span>
+      <span>01 / 10</span>
+    </div>
+  </section>
+
+  <!-- ============ 02 Problem ============ -->
+  <section data-label="The Broken Loop" class="slide">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>01 / Problem</span></div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; max-width: 1500px;">
+      <div class="eyebrow" style="margin-bottom: 32px;">THE BROKEN LOOP</div>
+      <h2 class="big">
+        Every team says code review is <em class="glow">critical</em>.<br/>
+        No one is proud of how theirs <em class="glow">works</em>.
+      </h2>
+      <p class="body" style="margin-top: 56px; max-width: 1200px; font-size: 32px;">
+        Reviews sit in queues for days. Bugs ship anyway. Senior engineers spend two hours a day rubber-stamping diffs they barely read. The industry has quietly accepted broken as normal.
+      </p>
+    </div>
+    <div class="chrome-bot"><span>02 / 10</span><span>— AXIOM · LAUNCH 04.18.26</span></div>
+  </section>
+
+  <!-- ============ 03 Big number ============ -->
+  <section data-label="The 31-Hour Problem" class="slide surface">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>02 / Evidence</span></div>
+    <div style="flex:1; display:grid; grid-template-columns: 1.4fr 1fr; gap: 80px; align-items:center;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 32px;">FROM 2,000 TEAMS · 2024–25</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-weight:400; line-height: 0.82; letter-spacing: -0.05em;">
+          <div style="font-size: 460px; color: var(--text);">31<span style="font-size: 160px; color: var(--accent); vertical-align: super; margin-left: 10px;">h</span></div>
+        </div>
+        <div style="margin-top: 40px; font-size: 36px; line-height: 1.2; max-width: 760px; color: var(--text);">
+          Median pull-request cycle time from open to merge.
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap: 28px;">
+        <div class="card">
+          <div class="mono" style="font-size:14px; letter-spacing:0.16em; color:var(--dim); text-transform:uppercase;">WAITING ON REVIEWER</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:80px; font-weight:500; margin-top:8px; letter-spacing:-0.03em;">24h</div>
+          <div class="body" style="font-size: 22px; margin-top: 4px;">77% of total cycle time.</div>
+        </div>
+        <div class="card">
+          <div class="mono" style="font-size:14px; letter-spacing:0.16em; color:var(--dim); text-transform:uppercase;">ACTIVE REVIEW</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:80px; font-weight:500; margin-top:8px; letter-spacing:-0.03em;">47m</div>
+          <div class="body" style="font-size: 22px; margin-top: 4px;">The only part that creates value.</div>
+        </div>
+        <div class="card">
+          <div class="mono" style="font-size:14px; letter-spacing:0.16em; color:var(--dim); text-transform:uppercase;">REWORK CYCLES</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size:80px; font-weight:500; margin-top:8px; letter-spacing:-0.03em;">2.4<span style="color:var(--dim); font-size: 40px;"> avg</span></div>
+          <div class="body" style="font-size: 22px; margin-top: 4px;">Back-and-forth rounds per PR.</div>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bot"><span>03 / 10</span><span>— BOTTLENECK IS WAITING, NOT WORKING</span></div>
+  </section>
+
+  <!-- ============ 04 Introducing ============ -->
+  <section data-label="Introducing Axiom" class="slide" style="padding: 0;">
+    <div class="chrome-top" style="left: 100px; right: 100px;"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>03 / Introducing</span></div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding: 0 100px;">
+      <div class="eyebrow" style="margin-bottom: 40px;">— INTRODUCING —</div>
+      <h1 class="hero" style="font-size: 360px;">Axiom<span style="color: var(--accent);">.</span></h1>
+      <div style="max-width: 1400px; margin-top: 56px; font-size: 52px; line-height: 1.15; font-weight: 300; color: var(--text-2); letter-spacing:-0.02em;">
+        An AI reviewer that reads your pull request the moment it opens — and leaves reviewer-quality comments in <em class="glow">thirteen seconds</em>.
+      </div>
+      <div style="margin-top: 72px; display:flex; gap: 16px; flex-wrap:wrap; justify-content:center;">
+        <span class="chip on">CORRECTNESS</span>
+        <span class="chip on">SECURITY</span>
+        <span class="chip on">CONTEXT-AWARE</span>
+        <span class="chip">NOT STYLE NITS</span>
+      </div>
+    </div>
+    <div class="chrome-bot" style="left: 100px; right: 100px;"><span>04 / 10</span><span>— REVIEWER-QUALITY, REVIEWER-SPEED</span></div>
+  </section>
+
+  <!-- ============ 05 Demo / Diff ============ -->
+  <section data-label="Live Example" class="slide surface">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>04 / Live</span></div>
+    <div style="margin-top: 100px;">
+      <div class="eyebrow" style="margin-bottom: 24px;">A REAL PR · DESIGN PARTNER · REDACTED</div>
+      <h3 class="med">Three issues a human reviewer missed. <em class="glow">Caught in 13 seconds.</em></h3>
+    </div>
+    <div style="flex:1; display:grid; grid-template-columns: 1.3fr 1fr; gap: 40px; margin-top: 40px; margin-bottom: 30px; min-height: 0;">
+      <!-- diff -->
+      <div class="term" style="font-size: 17px;">
+        <div class="bar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <div class="title">retry.ts · +14 −8</div>
+        </div>
+        <div class="body-txt" style="padding: 20px 24px;">
+          <div class="diff-row"><div class="sign">&nbsp;</div><div><span class="c">// exponential backoff on transient errors</span></div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div><span class="k">async function</span> retry(fn, ctx) {</div></div>
+          <div class="diff-row del"><div class="sign">−</div><div>&nbsp;&nbsp;<span class="k">for</span> (<span class="k">let</span> i = 0; i &lt; 5; i++) {</div></div>
+          <div class="diff-row add"><div class="sign">+</div><div>&nbsp;&nbsp;<span class="k">while</span> (<span class="k">true</span>) {</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">try</span> {</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">return await</span> fn();</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>&nbsp;&nbsp;&nbsp;&nbsp;} <span class="k">catch</span> (e) {</div></div>
+          <div class="diff-row add"><div class="sign">+</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.info(<span class="s">`retry failed: ${ctx.token}`</span>);</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">await</span> sleep(2 ** i * 100);</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>&nbsp;&nbsp;&nbsp;&nbsp;}</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>&nbsp;&nbsp;}</div></div>
+          <div class="diff-row"><div class="sign">&nbsp;</div><div>}</div></div>
+        </div>
+      </div>
+      <!-- comments -->
+      <div style="display:flex; flex-direction:column; gap: 18px;">
+        <div class="card" style="padding: 22px 26px; border-left: 3px solid var(--danger);">
+          <div class="mono" style="font-size:13px; letter-spacing:0.16em; color:var(--danger); text-transform:uppercase;">CORRECTNESS · L4</div>
+          <div style="font-size: 22px; margin-top: 10px; line-height: 1.35;">Loop is now unbounded — the old <span class="mono" style="color:var(--accent);">i &lt; 5</span> cap was the only retry limit. Will spin forever on persistent failures.</div>
+        </div>
+        <div class="card" style="padding: 22px 26px; border-left: 3px solid var(--danger);">
+          <div class="mono" style="font-size:13px; letter-spacing:0.16em; color:var(--danger); text-transform:uppercase;">SECURITY · L8</div>
+          <div style="font-size: 22px; margin-top: 10px; line-height: 1.35;">Log statement interpolates <span class="mono" style="color:var(--accent);">ctx.token</span> — session token will land in Datadog. Flagged as P1.</div>
+        </div>
+        <div class="card" style="padding: 22px 26px; border-left: 3px solid #FFD27D;">
+          <div class="mono" style="font-size:13px; letter-spacing:0.16em; color:#FFD27D; text-transform:uppercase;">CORRECTNESS · L6</div>
+          <div style="font-size: 22px; margin-top: 10px; line-height: 1.35;">Missing <span class="mono" style="color:var(--accent);">ctx.signal</span> check — parent cancellation won't propagate, leaking work on teardown.</div>
+        </div>
+        <div style="margin-top: auto; text-align:right;" class="mono">
+          <span style="color: var(--dim);">REVIEW COMPLETE ·</span>
+          <span style="color: var(--accent);">13.2s</span>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bot"><span>05 / 10</span><span>— THIRTEEN SECONDS, NOT THIRTEEN HOURS</span></div>
+  </section>
+
+  <!-- ============ 06 How It Works ============ -->
+  <section data-label="How It Works" class="slide">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>05 / Architecture</span></div>
+    <div style="margin-top: 100px;">
+      <div class="eyebrow" style="margin-bottom: 24px;">HOW IT WORKS</div>
+      <h3 class="med">Three layers. Most AI tools only have <em class="glow">the middle one</em>.</h3>
+    </div>
+    <div style="flex:1; display:grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 60px; margin-bottom: 30px; min-height: 0;">
+      <div class="card" style="display:flex; flex-direction:column;">
+        <div class="mono" style="font-size:16px; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase;">LAYER 01</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 56px; font-weight:500; line-height: 1; margin-top: 24px; letter-spacing:-0.02em;">Semantic<br/>Graph.</div>
+        <div class="body" style="margin-top: 20px; font-size: 22px;">Full symbol-level graph of your repo, rebuilt on every commit. Knows every caller, every type, every side effect.</div>
+        <div style="margin-top: auto; padding-top: 28px; border-top:1px solid var(--line);" class="mono" style="font-size: 15px; color:var(--dim);">STATIC · DETERMINISTIC</div>
+      </div>
+      <div class="card" style="display:flex; flex-direction:column; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent);">
+        <div class="mono" style="font-size:16px; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase;">LAYER 02</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 56px; font-weight:500; line-height: 1; margin-top: 24px; letter-spacing:-0.02em;">Review<br/>Model.</div>
+        <div class="body" style="margin-top: 20px; font-size: 22px;">Fine-tuned on 40M reviewed PRs, grounded in your team's own review history and conventions.</div>
+        <div style="margin-top: auto; padding-top: 28px; border-top:1px solid var(--line);" class="mono" style="font-size: 15px; color:var(--accent);">LEARNED · ADAPTIVE</div>
+      </div>
+      <div class="card" style="display:flex; flex-direction:column;">
+        <div class="mono" style="font-size:16px; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase;">LAYER 03</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 56px; font-weight:500; line-height: 1; margin-top: 24px; letter-spacing:-0.02em;">Sandbox<br/>Verify.</div>
+        <div class="body" style="margin-top: 20px; font-size: 22px;">Runs tests and fuzzers in ephemeral sandboxes to verify hypotheses before commenting. No hallucinations.</div>
+        <div style="margin-top: auto; padding-top: 28px; border-top:1px solid var(--line);" class="mono" style="font-size: 15px; color:var(--dim);">EXECUTABLE · GROUNDED</div>
+      </div>
+    </div>
+    <div class="chrome-bot"><span>06 / 10</span><span>— WHY OTHER TOOLS HALLUCINATE</span></div>
+  </section>
+
+  <!-- ============ 07 Results ============ -->
+  <section data-label="The Results" class="slide surface">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>06 / Results</span></div>
+    <div style="margin-top: 100px;">
+      <div class="eyebrow" style="margin-bottom: 24px;">140 TEAMS · 6 MONTHS · BETA</div>
+      <h3 class="med">What actually changes when <em class="glow">the loop closes</em>.</h3>
+    </div>
+    <div style="flex:1; display:grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; margin-bottom: 30px; align-items:center;">
+      <div>
+        <div class="mono" style="font-size:15px; letter-spacing:0.16em; color:var(--dim); text-transform:uppercase;">PR CYCLE TIME</div>
+        <div style="display:flex; align-items:baseline; gap: 16px; margin-top: 18px;">
+          <div style="font-family:'Space Grotesk',sans-serif; font-size: 40px; font-weight: 400; color: var(--dim); text-decoration: line-through; letter-spacing:-0.02em;">31h</div>
+          <div style="color:var(--accent); font-size: 28px;">→</div>
+          <div style="font-family:'Space Grotesk',sans-serif; font-size: 140px; font-weight: 500; color: var(--accent); line-height:1; letter-spacing:-0.04em;">4h</div>
+        </div>
+        <div class="body" style="margin-top: 16px; font-size: 22px;">Median open-to-merge. 87% reduction.</div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:15px; letter-spacing:0.16em; color:var(--dim); text-transform:uppercase;">ESCAPED DEFECTS</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 180px; font-weight:500; line-height:1; margin-top: 18px; letter-spacing:-0.04em;">−68<span style="font-size: 80px; color:var(--accent); vertical-align: super;">%</span></div>
+        <div class="body" style="margin-top: 16px; font-size: 22px;">Bugs reaching production, YoY.</div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:15px; letter-spacing:0.16em; color:var(--dim); text-transform:uppercase;">REVIEWER NPS</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 180px; font-weight:500; line-height:1; margin-top: 18px; letter-spacing:-0.04em;">+41</div>
+        <div class="body" style="margin-top: 16px; font-size: 22px;">Humans enjoy the interesting part again.</div>
+      </div>
+    </div>
+    <div class="chrome-bot"><span>07 / 10</span><span>— BETA COHORT · N=140</span></div>
+  </section>
+
+  <!-- ============ 08 Integrations ============ -->
+  <section data-label="Integrations" class="slide">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>07 / Integrations</span></div>
+    <div style="margin-top: 100px;">
+      <div class="eyebrow" style="margin-bottom: 24px;">WORKS WITH WHAT YOU ALREADY USE</div>
+      <h3 class="med">Fifteen-minute setup. First review <em class="glow">within the hour</em>.</h3>
+    </div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap: 32px;">
+      <div>
+        <div class="mono" style="font-size:16px; letter-spacing:0.22em; color:var(--dim); text-transform:uppercase; margin-bottom: 20px;">Source</div>
+        <div style="display:flex; gap: 16px; flex-wrap:wrap;">
+          <span class="chip">GITHUB</span><span class="chip">GITLAB</span><span class="chip">BITBUCKET</span><span class="chip">AZURE DEVOPS</span>
+        </div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:16px; letter-spacing:0.22em; color:var(--dim); text-transform:uppercase; margin-bottom: 20px;">Notify &amp; Track</div>
+        <div style="display:flex; gap: 16px; flex-wrap:wrap;">
+          <span class="chip">SLACK</span><span class="chip">LINEAR</span><span class="chip">JIRA</span><span class="chip">DISCORD</span><span class="chip">MS TEAMS</span>
+        </div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:16px; letter-spacing:0.22em; color:var(--dim); text-transform:uppercase; margin-bottom: 20px;">CI &amp; Dev Env</div>
+        <div style="display:flex; gap: 16px; flex-wrap:wrap;">
+          <span class="chip">GITHUB ACTIONS</span><span class="chip">CIRCLECI</span><span class="chip">BUILDKITE</span><span class="chip">VS CODE</span><span class="chip">CURSOR</span><span class="chip">JETBRAINS</span>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bot"><span>08 / 10</span><span>— NO MIGRATION · NO NEW DASHBOARD</span></div>
+  </section>
+
+  <!-- ============ 09 Pricing ============ -->
+  <section data-label="Pricing" class="slide surface">
+    <div class="chrome-top"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>08 / Pricing</span></div>
+    <div style="margin-top: 100px;">
+      <div class="eyebrow" style="margin-bottom: 24px;">PRICING</div>
+      <h3 class="med">Three tiers. Unlimited reviews. <em class="glow">No per-PR fees.</em></h3>
+    </div>
+    <div style="flex:1; display:grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 60px; margin-bottom: 30px;">
+      <div class="card" style="display:flex; flex-direction:column;">
+        <div class="mono" style="font-size:15px; letter-spacing:0.22em; color:var(--dim); text-transform:uppercase;">STARTER</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 96px; font-weight:500; line-height:1; margin-top: 32px; letter-spacing:-0.035em;">$0</div>
+        <div class="body" style="font-size:20px; margin-top: 6px;">Up to 10 developers.</div>
+        <div style="margin-top: 28px; display:flex; flex-direction:column; gap:12px; font-size: 20px; color: var(--text-2);">
+          <div>· Unlimited reviews</div>
+          <div>· Public repos</div>
+          <div>· Community support</div>
+        </div>
+      </div>
+      <div class="card" style="display:flex; flex-direction:column; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent);">
+        <div class="flex between" style="align-items:center;">
+          <div class="mono" style="font-size:15px; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase;">TEAM</div>
+          <div class="mono" style="font-size: 12px; letter-spacing:0.16em; color: #000; background: var(--accent); padding: 4px 10px; border-radius: 4px;">MOST POPULAR</div>
+        </div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 96px; font-weight:500; line-height:1; margin-top: 32px; letter-spacing:-0.035em;">$20<span style="font-size:28px; color:var(--text-2); letter-spacing:0; margin-left:6px;">/dev/mo</span></div>
+        <div class="body" style="font-size:20px; margin-top: 6px;">No seat caps. Annual billed.</div>
+        <div style="margin-top: 28px; display:flex; flex-direction:column; gap:12px; font-size: 20px; color: var(--text-2);">
+          <div>· Everything in Starter</div>
+          <div>· Private repos + monorepos</div>
+          <div>· Team-tuned models</div>
+          <div>· Slack, Linear, Jira</div>
+        </div>
+      </div>
+      <div class="card" style="display:flex; flex-direction:column;">
+        <div class="mono" style="font-size:15px; letter-spacing:0.22em; color:var(--dim); text-transform:uppercase;">ENTERPRISE</div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size: 96px; font-weight:500; line-height:1; margin-top: 32px; letter-spacing:-0.035em;">Custom</div>
+        <div class="body" style="font-size:20px; margin-top: 6px;">Call us. We'll call back.</div>
+        <div style="margin-top: 28px; display:flex; flex-direction:column; gap:12px; font-size: 20px; color: var(--text-2);">
+          <div>· On-prem + private hosting</div>
+          <div>· SOC 2 Type II · HIPAA</div>
+          <div>· Dedicated support</div>
+          <div>· Custom model training</div>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-bot"><span>09 / 10</span><span>— UNLIMITED REVIEWS IN EVERY TIER</span></div>
+  </section>
+
+  <!-- ============ 10 GA / Close ============ -->
+  <section data-label="Generally Available" class="slide" style="padding: 0; justify-content:center; align-items:center; text-align:center;">
+    <div class="gridlines"></div>
+    <div class="chrome-top" style="left: 100px; right: 100px;"><span class="wordmark"><span class="dot"></span>AXIOM</span><span>09 / Close</span></div>
+    <div style="position:relative; z-index:1; padding: 0 100px;">
+      <div class="eyebrow" style="margin-bottom: 40px;">AVAILABLE TODAY</div>
+      <h1 class="hero" style="font-size: 220px; line-height: 0.9;">
+        Close the loop<br/>
+        <em class="glow">this afternoon.</em>
+      </h1>
+      <div style="margin-top: 56px; font-size: 36px; color: var(--text-2); font-weight: 300; letter-spacing:-0.01em;">
+        Every team that signs up before Q3 gets <span style="color: var(--accent); font-weight: 400;">three months of Team tier</span> on the house.
+      </div>
+      <div style="margin-top: 72px; display:inline-flex; align-items:center; gap: 20px; border: 1px solid var(--line); border-radius: 99px; padding: 16px 28px;" class="mono">
+        <span style="width: 8px; height: 8px; background: var(--accent); border-radius: 99px; box-shadow: 0 0 12px var(--accent);"></span>
+        <span style="letter-spacing: 0.14em; color: var(--text); font-size: 22px;">axiom.dev/launch</span>
+      </div>
+    </div>
+    <div class="chrome-bot" style="left: 100px; right: 100px;"><span>10 / 10</span><span>— THANK YOU</span></div>
+  </section>
+
+</deck-stage>
+
+<div id="tweak-panel">
+  <h4>Theme</h4>
+  <div class="seg" role="group">
+    <button data-theme-btn="dark" aria-pressed="true">Dark</button>
+    <button data-theme-btn="light" aria-pressed="false">Light</button>
+    <button style="visibility:hidden"></button>
+  </div>
+  <h4>Accent</h4>
+  <div class="seg" role="group">
+    <button data-accent-btn="mint" aria-pressed="true">Mint</button>
+    <button data-accent-btn="violet" aria-pressed="false">Violet</button>
+    <button data-accent-btn="coral" aria-pressed="false">Coral</button>
+  </div>
+</div>
+
+<script src="deck-stage.js"></script>
+<script>
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "theme": "dark",
+    "accent": "mint"
+  }/*EDITMODE-END*/;
+  const state = { ...TWEAK_DEFAULTS };
+  const panel = document.getElementById('tweak-panel');
+
+  function apply() {
+    if (state.theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+    if (state.accent === 'mint') document.documentElement.removeAttribute('data-accent');
+    else document.documentElement.setAttribute('data-accent', state.accent);
+    panel.querySelectorAll('[data-theme-btn]').forEach(b => b.setAttribute('aria-pressed', b.dataset.themeBtn === state.theme ? 'true' : 'false'));
+    panel.querySelectorAll('[data-accent-btn]').forEach(b => b.setAttribute('aria-pressed', b.dataset.accentBtn === state.accent ? 'true' : 'false'));
+  }
+  apply();
+
+  panel.querySelectorAll('[data-theme-btn]').forEach(btn => btn.addEventListener('click', () => {
+    state.theme = btn.dataset.themeBtn; apply();
+    try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { theme: state.theme } }, '*'); } catch(e) {}
+  }));
+  panel.querySelectorAll('[data-accent-btn]').forEach(btn => btn.addEventListener('click', () => {
+    state.accent = btn.dataset.accentBtn; apply();
+    try { window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { accent: state.accent } }, '*'); } catch(e) {}
+  }));
+
+  window.addEventListener('message', (ev) => {
+    const d = ev.data || {};
+    if (d.type === '__activate_edit_mode') panel.setAttribute('data-visible', '');
+    else if (d.type === '__deactivate_edit_mode') panel.removeAttribute('data-visible');
+  });
+  try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch(e) {}
+</script>
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Apex Studio — Credentials</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #0D0D0D; overflow: hidden; }
+#root { width: 100vw; height: 100vh; }
+
+/* ── Animations ── */
+@keyframes fadeUp    { from { opacity:0; transform: translateY(40px);  } to { opacity:1; transform: translateY(0);  } }
+@keyframes fadeDown  { from { opacity:0; transform: translateY(-30px); } to { opacity:1; transform: translateY(0);  } }
+@keyframes fadeLeft  { from { opacity:0; transform: translateX(50px);  } to { opacity:1; transform: translateX(0);  } }
+@keyframes fadeRight { from { opacity:0; transform: translateX(-50px); } to { opacity:1; transform: translateX(0);  } }
+@keyframes fadeIn    { from { opacity:0; }                               to { opacity:1; }                            }
+@keyframes scaleIn   { from { opacity:0; transform: scale(0.88); }       to { opacity:1; transform: scale(1);    }   }
+@keyframes wipeLeft  { from { clip-path: inset(0 100% 0 0); }           to { clip-path: inset(0 0% 0 0); }          }
+@keyframes expandW   { from { width: 0; }                               to { width: 100%; }                         }
+@keyframes drawLine  { from { stroke-dashoffset: 1000; }                to { stroke-dashoffset: 0; }                }
+@keyframes spin      { from { transform: rotate(0deg); }                to { transform: rotate(360deg); }           }
+@keyframes pulse     { 0%,100% { opacity:.3; transform:scale(1); } 50% { opacity:.8; transform:scale(1.05); } }
+@keyframes countUp   { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+@keyframes slideInUp { from { transform: translateY(100%); opacity:0; } to { transform: translateY(0); opacity:1; } }
+@keyframes revealBlock { from { transform: scaleX(0); transform-origin: left; } to { transform: scaleX(1); transform-origin: left; } }
+
+/* ── Slide transition ── */
+@keyframes slideEnterRight { from { transform:translateX(4%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+@keyframes slideEnterLeft  { from { transform:translateX(-4%); opacity:0; } to { transform:translateX(0); opacity:1; } }
+@keyframes slideExitLeft   { from { transform:translateX(0); opacity:1; } to { transform:translateX(-4%); opacity:0; } }
+@keyframes slideExitRight  { from { transform:translateX(0); opacity:1; } to { transform:translateX(4%); opacity:0; } }
+
+.entering-fwd  { animation: slideEnterRight 0.7s cubic-bezier(.16,1,.3,1) forwards; }
+.entering-back { animation: slideEnterLeft  0.7s cubic-bezier(.16,1,.3,1) forwards; }
+.exiting-fwd   { animation: slideExitLeft   0.6s cubic-bezier(.4,0,0,1) forwards; }
+.exiting-back  { animation: slideExitRight  0.6s cubic-bezier(.4,0,0,1) forwards; }
+
+/* ── Helpers ── */
+.anim { animation-fill-mode: both; animation-timing-function: cubic-bezier(.16,1,.3,1); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+const { useState, useEffect, useRef, useCallback } = React;
+
+/* ── TOKENS ── */
+const T = {
+  ink: '#0D0D0D',
+  paper: '#F4F2ED',
+  paper2: '#E8E6DF',
+  muted: '#8A8782',
+  rule: '#D0CEC8',
+  red: '#E8333A',
+  redDim: '#B02028'
+};
+
+const TOTAL = 10;
+
+/* ── useCounter ── */
+function useCounter(from, to, durationMs, active) {
+  const [val, setVal] = useState(from);
+  useEffect(() => {
+    if (!active) {setVal(from);return;}
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min((now - start) / durationMs, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(from + (to - from) * eased));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    const raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, from, to, durationMs]);
+  return val;
+}
+
+/* ── Chrome — rendered at App level, not inside slides ── */
+function Chrome({ slide, total, onPrev, onNext, light }) {
+  const col = light ? T.muted : 'rgba(244,242,237,0.4)';
+  const border = light ? `1px solid ${T.rule}` : '1px solid rgba(244,242,237,0.12)';
+  const isCTA = slide === 9;
+  const bgColor = isCTA ? 'transparent' : 'transparent';
+  return (
+    <div style={{
+      position: 'absolute', bottom: 0, left: 0, right: 0,
+      height: 72, borderTop: isCTA ? '1px solid rgba(255,255,255,0.2)' : border,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 60px', zIndex: 20, pointerEvents: 'auto'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 20, height: 20, background: isCTA ? '#fff' : T.red, clipPath: 'polygon(50% 0,100% 100%,0 100%)' }} />
+        <span style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 14, letterSpacing: 4, color: isCTA ? 'rgba(255,255,255,0.8)' : light ? T.ink : T.paper, textTransform: 'uppercase' }}>APEX STUDIO</span>
+      </div>
+      <span style={{ fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 3, color: isCTA ? 'rgba(255,255,255,0.4)' : col }}>
+        {String(slide + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+      </span>
+      <div style={{ display: 'flex', gap: 8 }}>
+        {[['←', onPrev], ['→', onNext]].map(([sym, fn], i) =>
+        <button key={i} onClick={fn} style={{
+          background: 'transparent',
+          border: isCTA ? '1px solid rgba(255,255,255,0.3)' : border,
+          width: 40, height: 40, borderRadius: 4,
+          color: isCTA ? 'rgba(255,255,255,0.6)' : light ? T.muted : 'rgba(244,242,237,0.5)',
+          fontFamily: 'DM Mono', fontSize: 18, cursor: 'pointer', transition: 'all .2s'
+        }}
+        onMouseEnter={(e) => {e.currentTarget.style.background = T.red;e.currentTarget.style.color = '#fff';e.currentTarget.style.borderColor = T.red;}}
+        onMouseLeave={(e) => {e.currentTarget.style.background = 'transparent';e.currentTarget.style.color = isCTA ? 'rgba(255,255,255,0.6)' : light ? T.muted : 'rgba(244,242,237,0.5)';e.currentTarget.style.borderColor = isCTA ? 'rgba(255,255,255,0.3)' : border.split(' ')[2];}}>
+          {sym}</button>
+        )}
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 01 — Cover ── */
+function Slide01({ akey }) {
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.ink, overflow: 'hidden' }}>
+      {/* Animated geometry */}
+      <svg style={{ position: 'absolute', inset: 0 }} width="100%" height="100%" viewBox="0 0 1280 720" preserveAspectRatio="xMidYMid slice">
+        {/* Large triangle */}
+        <polygon points="900,0 1280,0 1280,620"
+        fill="none" stroke="rgba(232,51,58,0.25)" strokeWidth="1.5"
+        className="anim" style={{ animation: 'fadeIn .8s .1s both' }} key={akey + '-t1'} />
+        {/* Small triangle */}
+        <polygon points="1050,0 1280,0 1280,280"
+        fill="rgba(232,51,58,0.06)"
+        className="anim" style={{ animation: 'fadeIn 1s .4s both' }} key={akey + '-t2'} />
+        {/* Dot grid */}
+        {Array.from({ length: 8 }, (_, row) => Array.from({ length: 12 }, (_, col) =>
+        <circle key={`${row}-${col}`} cx={820 + col * 40} cy={50 + row * 40} r={1.5}
+        fill="rgba(244,242,237,0.12)"
+        className="anim" style={{ animation: `fadeIn .4s ${0.05 + row * 0.03 + col * 0.02}s both` }} />
+        ))}
+        {/* Horizontal rule */}
+        <line x1={60} y1={620} x2={620} y2={620} stroke="rgba(232,51,58,0.5)" strokeWidth="1"
+        strokeDasharray="1000" strokeDashoffset="1000"
+        className="anim" style={{ animation: 'drawLine .8s .7s cubic-bezier(.16,1,.3,1) forwards' }} />
+      </svg>
+
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '80px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+        <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 36 }}>
+          — CREDENTIALS DECK · 2026
+        </div>
+        <div style={{ overflow: 'hidden' }}>
+          <div className="anim" style={{ animation: 'slideInUp .7s .2s cubic-bezier(.16,1,.3,1) both', fontFamily: 'Syne', fontWeight: 800, fontSize: 160, lineHeight: .9, letterSpacing: -6, color: T.paper }}>
+            Apex
+          </div>
+        </div>
+        <div style={{ overflow: 'hidden' }}>
+          <div className="anim" style={{ animation: 'slideInUp .7s .35s cubic-bezier(.16,1,.3,1) both', fontFamily: 'Syne', fontWeight: 800, fontSize: 160, lineHeight: .9, letterSpacing: -6, color: T.red }}>
+            Studio.
+          </div>
+        </div>
+        <div className="anim" style={{ animation: 'fadeUp .6s .8s both', fontFamily: 'DM Sans', fontWeight: 300, fontSize: 24, color: 'rgba(244,242,237,0.55)', maxWidth: 560, marginTop: 40, lineHeight: 1.5 }}>
+          We build brands that change how people feel about a category.
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 02 — Manifesto ── */
+function Slide02({ akey }) {
+  const words = ['We', 'don\'t', 'make', 'things', 'look', 'good.', 'We', 'make', 'things', 'feel', 'true.'];
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.paper, overflow: 'hidden' }}>
+      <svg style={{ position: 'absolute', inset: 0 }} width="100%" height="100%" viewBox="0 0 1280 720">
+        <circle cx={1100} cy={80} r={200} fill="none" stroke={T.rule} strokeWidth="1"
+        className="anim" style={{ animation: 'scaleIn .8s both' }} key={akey} />
+        <circle cx={1100} cy={80} r={120} fill="none" stroke={T.rule} strokeWidth="1"
+        className="anim" style={{ animation: 'scaleIn .8s .1s both' }} key={akey + '-c2'} />
+        <circle cx={1100} cy={80} r={40} fill={T.red} opacity=".12"
+        className="anim" style={{ animation: 'scaleIn .6s .2s both' }} key={akey + '-c3'} />
+      </svg>
+
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '80px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'center', maxWidth: 900 }}>
+        <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 56 }}>
+          — 01 PHILOSOPHY
+        </div>
+        <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 80, lineHeight: 1.05, letterSpacing: -3, color: T.ink }}>
+          {words.map((w, i) =>
+          <span key={`${akey}-${i}`} className="anim" style={{
+            display: 'inline-block', marginRight: w.endsWith('.') || w.endsWith(',') ? 0 : 18,
+            animation: `fadeUp .5s ${.1 + i * .07}s both`,
+            color: ['feel', 'true.'].includes(w) ? T.red : T.ink
+          }}>{w}</span>
+          )}
+        </div>
+        <div className="anim" style={{ animation: 'fadeUp .6s 1.1s both', fontFamily: 'DM Sans', fontWeight: 300, fontSize: 22, color: T.muted, marginTop: 48, maxWidth: 640, lineHeight: 1.6 }}>
+          Brand is a promise made in two seconds and kept over a lifetime. We obsess over both.
+        </div>
+        {/* Red line */}
+        <div className="anim" style={{ animation: 'expandW .6s .5s cubic-bezier(.16,1,.3,1) both', height: 3, background: T.red, width: 0, marginTop: 56, maxWidth: 120 }} />
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 03 — Services ── */
+function Slide03({ akey }) {
+  const services = [
+  { num: '01', title: 'Brand\nStrategy', body: 'Positioning, naming, narrative architecture. The thinking before the making.', delay: .15 },
+  { num: '02', title: 'Visual\nIdentity', body: 'Logo, type, colour, motion. Systems that scale from a favicon to a billboard.', delay: .3 },
+  { num: '03', title: 'Campaign &\nActivation', body: '360° campaigns, editorial, digital, OOH. Ideas that earn attention.', delay: .45 }];
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.ink, overflow: 'hidden' }}>
+      <svg style={{ position: 'absolute', inset: 0 }} width="100%" height="100%" viewBox="0 0 1280 720">
+        {[1, 2].map((i) =>
+        <line key={i} x1={0} y1={i * 240} x2={1280} y2={i * 240} stroke="rgba(244,242,237,0.05)" strokeWidth="1" />
+        )}
+        <line x1={0} y1={0} x2={0} y2={0}
+        stroke="none" />
+      </svg>
+
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '70px 60px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 60 }}>
+          <div className="anim" style={{ animation: 'fadeUp .5s both' }}>
+            <div style={{ fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 12 }}>— 02 WHAT WE DO</div>
+            <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 64, letterSpacing: -2, color: T.paper, lineHeight: .95 }}>Our Services.</div>
+          </div>
+          <div className="anim" style={{ animation: 'fadeIn .5s .4s both', fontFamily: 'DM Sans', fontSize: 18, fontWeight: 300, color: 'rgba(244,242,237,0.4)', maxWidth: 340, textAlign: 'right', lineHeight: 1.5 }}>
+            Three disciplines. One integrated offering.
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24, flex: 1 }}>
+          {services.map((s, i) =>
+          <div key={`${akey}-${i}`} className="anim" style={{ animation: `scaleIn .65s ${s.delay}s both` }}>
+              <div style={{
+              height: '100%', border: '1px solid rgba(244,242,237,0.12)',
+              padding: 36, display: 'flex', flexDirection: 'column',
+              background: 'rgba(244,242,237,0.03)',
+              borderRadius: 2, position: 'relative', overflow: 'hidden'
+            }}>
+                {/* Number */}
+                <div style={{ fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 4, color: 'rgba(244,242,237,0.3)', marginBottom: 24 }}>{s.num}</div>
+                {/* Title */}
+                <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 46, letterSpacing: -1.5, color: T.paper, lineHeight: 1.05, whiteSpace: 'pre-line', flex: 1 }}>{s.title}</div>
+                {/* Body */}
+                <div style={{ fontFamily: 'DM Sans', fontSize: 18, fontWeight: 300, color: 'rgba(244,242,237,0.5)', lineHeight: 1.6, marginTop: 24 }}>{s.body}</div>
+                {/* Red corner accent */}
+                <div style={{ position: 'absolute', bottom: 0, left: 0, width: 3, height: '100%', background: T.red, opacity: .6 }} />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 04 — Clients ── */
+function Slide04({ akey }) {
+  const clients = ['Meridian Bank', 'Solara Energy', 'Volta EV', 'Helix Pharma', 'Archive Weekly', 'Nomad Travel', 'Crest Foods', 'Lumina Audio', 'Peak Athletics', 'Orbit Labs', 'Fable Studios', 'Dune Apparel'];
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.paper, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '70px 60px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 64 }}>
+          <div>
+            <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 12 }}>— 03 SELECTED CLIENTS</div>
+            <div className="anim" style={{ animation: 'fadeUp .5s .1s both', fontFamily: 'Syne', fontWeight: 800, fontSize: 64, letterSpacing: -2, color: T.ink, lineHeight: .95 }}>Who we've<br />worked with.</div>
+          </div>
+          <div className="anim" style={{ animation: 'fadeIn .6s .5s both', fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 3, color: T.muted }}>
+            60+ brands · 18 countries
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '1px', background: T.rule, flex: 1 }}>
+          {clients.map((c, i) =>
+          <div key={`${akey}-${i}`} className="anim" style={{ animation: `wipeLeft .5s ${.08 + i * .06}s both` }}>
+              <div style={{
+              background: T.paper, padding: '28px 24px',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '100%', position: 'relative'
+            }}
+            onMouseEnter={(e) => {e.currentTarget.style.background = T.ink;e.currentTarget.querySelector('span').style.color = T.paper;}}
+            onMouseLeave={(e) => {e.currentTarget.style.background = T.paper;e.currentTarget.querySelector('span').style.color = T.ink;}}>
+              
+                <span style={{ fontFamily: 'Syne', fontWeight: 600, fontSize: 17, letterSpacing: -0.5, color: T.ink, textAlign: 'center', transition: 'color .2s' }}>{c}</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 05 — Case Study ── */
+function Slide05({ akey }) {
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.ink, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: '0 0 72px', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+        {/* Left: image placeholder */}
+        <div className="anim" style={{ animation: 'fadeIn .6s .1s both', position: 'relative', borderRight: '1px solid rgba(244,242,237,0.08)', overflow: 'hidden' }}>
+          {/* Animated pattern */}
+          <svg width="100%" height="100%" viewBox="0 0 640 648" style={{ position: 'absolute', inset: 0 }}>
+            <rect width="640" height="648" fill="#0D0D0D" />
+            {Array.from({ length: 10 }, (_, i) =>
+            <rect key={i} x={64 + i * 54} y={64} width={38} height={520}
+            fill="none" stroke="rgba(232,51,58,0.12)" strokeWidth="1" />
+            )}
+            <polygon points="320,140 500,480 140,480" fill="none" stroke="rgba(232,51,58,0.3)" strokeWidth="1.5"
+            className="anim" style={{ animation: 'scaleIn .8s .3s both' }} key={akey} />
+            <polygon points="320,200 440,440 200,440" fill="rgba(232,51,58,0.08)"
+            className="anim" style={{ animation: 'scaleIn .8s .5s both' }} key={akey + '-2'} />
+          </svg>
+          <div style={{ position: 'absolute', bottom: 40, left: 40 }}>
+            <div className="anim" style={{ animation: 'fadeUp .5s .7s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 6, color: T.red, textTransform: 'uppercase', marginBottom: 10 }}>CASE STUDY</div>
+            <div className="anim" style={{ animation: 'fadeUp .5s .8s both', fontFamily: 'Syne', fontWeight: 700, fontSize: 52, letterSpacing: -2, color: T.paper, lineHeight: 1 }}>Volta EV</div>
+            <div className="anim" style={{ animation: 'fadeUp .5s .9s both', fontFamily: 'DM Sans', fontSize: 18, fontWeight: 300, color: 'rgba(244,242,237,0.45)', marginTop: 8 }}>Brand Identity · 2025</div>
+          </div>
+          <div style={{ position: 'absolute', top: 40, left: 40, fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 4, color: 'rgba(244,242,237,0.2)', textTransform: 'uppercase' }}>
+            FIG. 01 — BRANDMARK EXPLORATION
+          </div>
+        </div>
+
+        {/* Right: content */}
+        <div style={{ padding: '70px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div className="anim" style={{ animation: 'fadeLeft .5s .3s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 40 }}>— THE CHALLENGE</div>
+          <div className="anim" style={{ animation: 'fadeLeft .6s .45s both', fontFamily: 'Syne', fontWeight: 700, fontSize: 44, letterSpacing: -1.5, color: T.paper, lineHeight: 1.1, marginBottom: 28 }}>
+            Make an EV brand feel less like technology, more like <span style={{ color: T.red }}>desire</span>.
+          </div>
+          <div className="anim" style={{ animation: 'fadeLeft .6s .6s both', fontFamily: 'DM Sans', fontSize: 19, fontWeight: 300, color: 'rgba(244,242,237,0.55)', lineHeight: 1.65, marginBottom: 48 }}>
+            Volta came to us with a product story and no emotional story. We rebuilt their brand from naming through to full campaign — positioning them as the first EV brand you actually want to be seen in.
+          </div>
+
+          {/* Outcomes */}
+          {[['Brand awareness', '↑ 340% YoY'], ['Pre-order signups', '82,000 in 48h'], ['Press coverage', 'Vogue, Wallpaper*, Wired']].map(([l, v], i) =>
+          <div key={i} className="anim" style={{ animation: `fadeLeft .5s ${.75 + i * .12}s both`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 0', borderBottom: `1px solid rgba(244,242,237,${i === 2 ? '0' : '0.1'})` }}>
+              <span style={{ fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 3, color: 'rgba(244,242,237,0.4)', textTransform: 'uppercase' }}>{l}</span>
+              <span style={{ fontFamily: 'Syne', fontWeight: 600, fontSize: 22, color: T.red }}>{v}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 06 — Process ── */
+function Slide06({ akey }) {
+  const steps = [
+  { n: '01', title: 'Immersion', body: 'We go deep. Stakeholder interviews, competitor audits, audience research. No assumptions.' },
+  { n: '02', title: 'Distillation', body: 'We find the one true thing — the positioning that only this brand can own.' },
+  { n: '03', title: 'Expression', body: 'We make it visible. Identity, voice, motion, environment. Every touchpoint considered.' },
+  { n: '04', title: 'Activation', body: 'We launch it right. Campaign, rollout, team playbooks. The work doesn\'t stop at handoff.' }];
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.paper2, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '70px 60px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 56 }}>
+          <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 12 }}>— 04 HOW WE WORK</div>
+          <div className="anim" style={{ animation: 'fadeUp .5s .1s both', fontFamily: 'Syne', fontWeight: 800, fontSize: 64, letterSpacing: -2, color: T.ink, lineHeight: .95 }}>The process.</div>
+        </div>
+
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0, position: 'relative' }}>
+          {/* Connecting line */}
+          <svg style={{ position: 'absolute', top: '28%', left: '8%', right: '8%', height: 2, pointerEvents: 'none', zIndex: 0, width: '84%' }} viewBox="0 0 100 1" preserveAspectRatio="none">
+            <line x1="0" y1="0.5" x2="100" y2="0.5" stroke={T.rule} strokeWidth="1" strokeDasharray="4 4"
+            className="anim" style={{ animation: 'drawLine 1.2s .6s both', strokeDashoffset: 1000 }} key={akey} />
+          </svg>
+
+          {steps.map((s, i) =>
+          <div key={`${akey}-${i}`} className="anim" style={{ animation: `fadeUp .6s ${.1 + i * .15}s both`, padding: '0 28px', position: 'relative', zIndex: 1 }}>
+              {/* Node */}
+              <div style={{
+              width: 48, height: 48, borderRadius: '50%',
+              background: i === 0 ? T.red : T.paper,
+              border: `2px solid ${i === 0 ? T.red : T.rule}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              marginBottom: 28
+            }}>
+                <span style={{ fontFamily: 'DM Mono', fontSize: 13, color: i === 0 ? '#fff' : T.muted, letterSpacing: 1 }}>{s.n}</span>
+              </div>
+              <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 34, letterSpacing: -1, color: T.ink, marginBottom: 16, lineHeight: 1 }}>{s.title}</div>
+              <div style={{ fontFamily: 'DM Sans', fontSize: 17, fontWeight: 300, color: T.muted, lineHeight: 1.6 }}>{s.body}</div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 07 — Numbers ── */
+function Slide07({ akey, active }) {
+  const stats = [
+  { val: 14, suffix: 'yr', label: 'Years in business' },
+  { val: 60, suffix: '+', label: 'Brands built' },
+  { val: 14, suffix: 'yr', label: 'Countries reached' },
+  { val: 34, suffix: '', label: 'Industry awards' }];
+
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.ink, overflow: 'hidden' }}>
+      <svg style={{ position: 'absolute', inset: 0 }} width="100%" height="100%" viewBox="0 0 1280 720">
+        {[0, 1, 2, 3].map((i) =>
+        <line key={i} x1={0} y1={i === 0 ? 0 : i * 240} x2={1280} y2={i === 0 ? 0 : i * 240}
+        stroke="rgba(244,242,237,0.05)" strokeWidth="1" />
+        )}
+      </svg>
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '70px 60px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 60 }}>
+          <div>
+            <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 12 }}>— 05 IN NUMBERS</div>
+            <div className="anim" style={{ animation: 'fadeUp .5s .1s both', fontFamily: 'Syne', fontWeight: 800, fontSize: 64, letterSpacing: -2, color: T.paper, lineHeight: .95 }}>Proof of work.</div>
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gridTemplateRows: 'repeat(2,1fr)', gap: 2, flex: 1 }}>
+          {stats.map((s, i) => {
+            const count = useCounter(0, s.val, 1400, active);
+            return (
+              <div key={`${akey}-${i}`} className="anim" style={{ animation: `fadeUp .65s ${.1 + i * .1}s both`, padding: '28px 48px', border: '1px solid rgba(244,242,237,0.08)', display: 'flex', alignItems: 'center', gap: 48 }}>
+                <div style={{ fontFamily: 'Syne', fontWeight: 800, fontSize: 120, letterSpacing: -5, lineHeight: .9, color: T.paper }}>
+                  {count}{s.suffix}
+                </div>
+                <div>
+                  <div style={{ width: 32, height: 2, background: T.red, marginBottom: 16 }} />
+                  <div style={{ fontFamily: 'DM Sans', fontSize: 20, fontWeight: 300, color: 'rgba(244,242,237,0.5)', lineHeight: 1.4 }}>{s.label}</div>
+                </div>
+              </div>);
+
+          })}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 08 — Team ── */
+function Slide08({ akey }) {
+  const team = [
+  { name: 'Mara Voss', role: 'Creative Director' },
+  { name: 'James Park', role: 'Strategy Lead' },
+  { name: 'Lena Roth', role: 'Design Director' },
+  { name: 'Theo Alves', role: 'Motion & Digital' }];
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.paper, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '70px 60px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 48 }}>
+          <div>
+            <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 12 }}>— 06 THE TEAM</div>
+            <div className="anim" style={{ animation: 'fadeUp .5s .1s both', fontFamily: 'Syne', fontWeight: 800, fontSize: 64, letterSpacing: -2, color: T.ink, lineHeight: .95 }}>The people<br />behind the work.</div>
+          </div>
+          <div className="anim" style={{ animation: 'fadeIn .6s .5s both', fontFamily: 'DM Sans', fontSize: 18, fontWeight: 300, color: T.muted, maxWidth: 340, textAlign: 'right', lineHeight: 1.5 }}>
+            12 full-time. 40+ specialist collaborators. Zero compromise.
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24, flex: 1 }}>
+          {team.map((m, i) =>
+          <div key={`${akey}-${i}`} className="anim" style={{ animation: `fadeUp .6s ${.15 + i * .12}s both`, display: 'flex', flexDirection: 'column' }}>
+              {/* Photo placeholder */}
+              <div style={{
+              flex: 1, background: i % 2 === 0 ? T.paper2 : '#E0DDD4',
+              border: `1px solid ${T.rule}`, position: 'relative',
+              overflow: 'hidden', minHeight: 220,
+              backgroundImage: `repeating-linear-gradient(45deg, transparent 0 12px, rgba(0,0,0,0.04) 12px 24px)`
+            }}>
+                <div style={{ position: 'absolute', bottom: 16, left: 16, fontFamily: 'DM Mono', fontSize: 11, letterSpacing: 4, color: T.muted, textTransform: 'uppercase' }}>
+                  PORTRAIT
+                </div>
+                {/* Red accent top bar */}
+                <div className="anim" style={{ animation: `expandW .4s ${.4 + i * .1}s both`, position: 'absolute', top: 0, left: 0, height: 3, background: T.red, width: 0 }} />
+              </div>
+              <div style={{ marginTop: 20 }}>
+                <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 24, letterSpacing: -.5, color: T.ink }}>{m.name}</div>
+                <div style={{ fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 3, color: T.red, marginTop: 6, textTransform: 'uppercase' }}>{m.role}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 09 — Awards ── */
+function Slide09({ akey }) {
+  const awards = [
+  { org: 'Cannes Lions', award: 'Grand Prix — Brand Experience', year: '2024' },
+  { org: 'D&AD', award: 'Black Pencil — Identity Design', year: '2024' },
+  { org: 'The One Show', award: 'Gold — Brand Strategy', year: '2023' },
+  { org: 'Clio Awards', award: 'Gold — Integrated Campaign', year: '2023' },
+  { org: 'AIGA', award: 'Brand of the Year', year: '2022' },
+  { org: 'Fast Company', award: 'Most Innovative Branding Studio', year: '2022' }];
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.ink, overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '70px 60px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 56 }}>
+          <div>
+            <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: T.red, textTransform: 'uppercase', marginBottom: 12 }}>— 07 RECOGNITION</div>
+            <div className="anim" style={{ animation: 'fadeUp .5s .1s both', fontFamily: 'Syne', fontWeight: 800, fontSize: 64, letterSpacing: -2, color: T.paper, lineHeight: .95 }}>Awards &<br />recognition.</div>
+          </div>
+          <div className="anim" style={{ animation: 'fadeIn .6s .4s both', fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 3, color: 'rgba(244,242,237,0.3)' }}>
+            34 awards · 2019–2024
+          </div>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 0 }}>
+          {awards.map((a, i) =>
+          <div key={`${akey}-${i}`} className="anim" style={{ animation: `fadeLeft .5s ${.15 + i * .1}s both`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 0', borderBottom: `1px solid rgba(244,242,237,${i === awards.length - 1 ? '0' : '0.08'})` }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div style={{ width: 8, height: 8, background: T.red, transform: 'rotate(45deg)', flexShrink: 0 }} />
+                <span style={{ fontFamily: 'DM Mono', fontSize: 14, letterSpacing: 3, color: 'rgba(244,242,237,0.4)', textTransform: 'uppercase', width: 160 }}>{a.org}</span>
+                <span style={{ fontFamily: 'Syne', fontWeight: 500, fontSize: 22, color: T.paper, letterSpacing: -.5 }}>{a.award}</span>
+              </div>
+              <span style={{ fontFamily: 'DM Mono', fontSize: 14, letterSpacing: 4, color: 'rgba(244,242,237,0.3)' }}>{a.year}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>);
+
+}
+
+/* ── Slide 10 — CTA ── */
+function Slide10({ akey }) {
+  return (
+    <div style={{ position: 'absolute', inset: 0, background: T.red, overflow: 'hidden' }}>
+      <svg style={{ position: 'absolute', inset: 0 }} width="100%" height="100%" viewBox="0 0 1280 720">
+        <polygon points="0,0 400,0 0,400" fill="rgba(0,0,0,0.1)"
+        className="anim" style={{ animation: 'fadeIn .8s .4s both' }} key={akey} />
+        <polygon points="1280,720 880,720 1280,320" fill="rgba(0,0,0,0.1)"
+        className="anim" style={{ animation: 'fadeIn .8s .5s both' }} key={akey + '2'} />
+        {/* Grid dots */}
+        {Array.from({ length: 6 }, (_, r) => Array.from({ length: 8 }, (_, c) =>
+        <circle key={`${r}-${c}`} cx={400 + c * 80} cy={200 + r * 80} r={2}
+        fill="rgba(255,255,255,0.15)"
+        className="anim" style={{ animation: `fadeIn .3s ${.4 + r * .05 + c * .03}s both` }} />
+        ))}
+      </svg>
+
+      <div style={{ position: 'absolute', inset: '0 0 72px', padding: '80px 60px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="anim" style={{ animation: 'fadeIn .5s both', fontFamily: 'DM Mono', fontSize: 12, letterSpacing: 8, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase' }}>
+          — 08 LET'S WORK
+        </div>
+
+        <div>
+          <div style={{ overflow: 'hidden' }}>
+            <div className="anim" style={{ animation: 'slideInUp .7s .2s cubic-bezier(.16,1,.3,1) both', fontFamily: 'Syne', fontWeight: 800, letterSpacing: -3, color: '#fff', lineHeight: 0.92, fontSize: 100 }}>
+              Let's make
+            </div>
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <div className="anim" style={{ animation: 'slideInUp .7s .35s cubic-bezier(.16,1,.3,1) both', fontFamily: 'Syne', fontWeight: 800, letterSpacing: -3, color: T.ink, lineHeight: 0.92, fontSize: 100 }}>
+              something
+            </div>
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <div className="anim" style={{ animation: 'slideInUp .7s .5s cubic-bezier(.16,1,.3,1) both', fontFamily: 'Syne', fontWeight: 800, fontSize: 100, letterSpacing: -3, color: '#fff', lineHeight: 0.92 }}>
+              unforgettable.
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div className="anim" style={{ animation: 'fadeUp .6s .9s both' }}>
+            <div style={{ fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 4, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 }}>Get in touch</div>
+            <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 32, color: '#fff', letterSpacing: -1 }}>hello@apexstudio.co</div>
+          </div>
+          <div className="anim" style={{ animation: 'fadeUp .6s 1.1s both', textAlign: 'right' }}>
+            <div style={{ fontFamily: 'DM Mono', fontSize: 13, letterSpacing: 4, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', marginBottom: 8 }}>New projects</div>
+            <div style={{ fontFamily: 'Syne', fontWeight: 700, fontSize: 32, color: '#fff', letterSpacing: -1 }}>apexstudio.co</div>
+          </div>
+        </div>
+      </div>
+
+    </div>);
+
+}
+
+/* ── SLIDES REGISTRY ── */
+const SLIDES = [Slide01, Slide02, Slide03, Slide04, Slide05, Slide06, Slide07, Slide08, Slide09, Slide10];
+
+/* ── THEMES ── */
+const THEMES = {
+  apex:    { ink:'#0D0D0D', paper:'#F4F2ED', paper2:'#E8E6DF', red:'#E8333A', muted:'#8A8782', rule:'#D0CEC8' },
+  atelier: { ink:'#0A0806', paper:'#F0E8DC', paper2:'#E4DDD0', red:'#C9A84C', muted:'#8A7D6A', rule:'#C8BCA8' },
+  swiss:   { ink:'#0A0A0A', paper:'#FFFFFF', paper2:'#F0F0F0', red:'#0A0A0A', muted:'#767676', rule:'#DEDEDE' },
+};
+
+function applyTheme(mood, energy, tempo) {
+  const th = THEMES[mood] || THEMES.apex;
+  const r = document.documentElement;
+  r.style.setProperty('--apex-speed',   tempo   === 'cinematic' ? '1.9' : '0.65');
+  // We store these so slides can read them via CSS vars if needed
+  r.dataset.mood   = mood;
+  r.dataset.energy = energy;
+  r.dataset.tempo  = tempo;
+  // Directly update the JS token object so live slides pick it up on next render
+  Object.assign(T, { ink: th.ink, paper: th.paper, paper2: th.paper2, red: th.red, muted: th.muted, rule: th.rule });
+  // Force a re-render by bumping a global flag — App watches it
+  window.__apexThemeVersion = (window.__apexThemeVersion || 0) + 1;
+  window.__apexThemeChange && window.__apexThemeChange();
+}
+
+/* ── Tweaks Panel ── */
+function TweaksPanel({ onClose }) {
+  const [mood,   setMood]   = useState('apex');
+  const [energy, setEnergy] = useState('heavy');
+  const [tempo,  setTempo]  = useState('punchy');
+
+  useEffect(() => { applyTheme(mood, energy, tempo); }, [mood, energy, tempo]);
+
+  const seg = (label, opts, val, set) => (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{ fontSize:11, letterSpacing:'0.14em', color:'rgba(244,242,237,0.35)', textTransform:'uppercase', marginBottom:10 }}>{label}</div>
+      <div style={{ display:'grid', gridTemplateColumns:`repeat(${opts.length},1fr)`, background:'rgba(255,255,255,0.06)', borderRadius:10, padding:3, gap:3 }}>
+        {opts.map(([k, lbl]) => (
+          <button key={k} onClick={() => set(k)} style={{
+            appearance:'none', border:0, padding:'9px 6px', borderRadius:8, cursor:'pointer',
+            fontFamily:'DM Mono', fontSize:11, letterSpacing:'0.12em', textTransform:'uppercase',
+            transition:'all .18s',
+            background: val === k ? '#E8333A' : 'transparent',
+            color:      val === k ? '#fff'    : 'rgba(244,242,237,0.5)',
+          }}>{lbl}</button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const moods   = [['apex','Apex'],['atelier','Atelier'],['swiss','Swiss']];
+  const energies = [['heavy','Heavy'],['refined','Refined']];
+  const tempos  = [['punchy','Punchy'],['cinematic','Cinematic']];
+
+  return (
+    <div style={{
+      position:'fixed', right:24, top:24, zIndex:9999,
+      background:'rgba(13,13,13,0.96)', border:'1px solid rgba(244,242,237,0.14)',
+      borderRadius:14, padding:'18px 20px', minWidth:264,
+      fontFamily:'DM Mono', backdropFilter:'blur(14px)',
+      boxShadow:'0 24px 64px rgba(0,0,0,0.7)',
+    }}>
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:22 }}>
+        <span style={{ fontSize:11, letterSpacing:'0.22em', color:'rgba(244,242,237,0.4)', textTransform:'uppercase' }}>Tweaks</span>
+        <button onClick={onClose} style={{ appearance:'none', border:0, background:'none', color:'rgba(244,242,237,0.4)', cursor:'pointer', fontSize:20, lineHeight:1 }}>×</button>
+      </div>
+      {seg('Studio Mood',   moods,   mood,   setMood)}
+      {seg('Type Energy',   energies,energy, setEnergy)}
+      {seg('Motion Tempo',  tempos,  tempo,  setTempo)}
+      <div style={{ fontSize:10, letterSpacing:'0.08em', color:'rgba(244,242,237,0.18)', lineHeight:1.6, textAlign:'center', marginTop:4 }}>
+        Reshapes palette · type weight · animation rhythm
+      </div>
+    </div>
+  );
+}
+
+/* ── LIGHT SLIDES (white/cream bg) ── */
+const LIGHT_SLIDES = new Set([1, 3, 5, 7]);
+
+/* ── MAIN APP ── */
+function App() {
+  const [current,  setCurrent]  = useState(0);
+  const [prev,     setPrev]     = useState(null);
+  const [dir,      setDir]      = useState(1);
+  const [animKeys, setAnimKeys] = useState(Array(TOTAL).fill(0));
+  const [showTweaks, setShowTweaks] = useState(false);
+  const [themeVer,   setThemeVer]   = useState(0);
+  const transRef   = useRef(false);
+  const currentRef = useRef(0);
+
+  useEffect(() => {
+    applyTheme('apex', 'heavy', 'punchy');
+    window.__apexThemeChange = () => setThemeVer(v => v + 1);
+    return () => { window.__apexThemeChange = null; };
+  }, []);
+
+  useEffect(() => {
+    const handler = (ev) => {
+      const d = ev.data || {};
+      if (d.type === '__activate_edit_mode')   setShowTweaks(true);
+      if (d.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', handler);
+    try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch(e) {}
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const navigate = useCallback((n) => {
+    if (n < 0 || n >= TOTAL || transRef.current) return;
+    const cur = currentRef.current;
+    setDir(n > cur ? 1 : -1);
+    setPrev(cur);
+    transRef.current = true;
+    setTimeout(() => {
+      setCurrent(n);
+      currentRef.current = n;
+      setAnimKeys(k => k.map((v, i) => i === n ? v + 1 : v));
+      setPrev(null);
+      transRef.current = false;
+    }, 620);
+  }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') navigate(currentRef.current + 1);
+      if (e.key === 'ArrowLeft') navigate(currentRef.current - 1);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [navigate]);
+
+  const [scale, setScale] = useState(1);
+  const W = 1280, H = 720;
+  useEffect(() => {
+    const fit = () => setScale(Math.min(window.innerWidth / W, window.innerHeight / H));
+    fit();
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
+
+  const onPrev  = useCallback(() => navigate(currentRef.current - 1), [navigate]);
+  const onNext  = useCallback(() => navigate(currentRef.current + 1), [navigate]);
+  const isLight = LIGHT_SLIDES.has(current);
+
+  return (
+    <div style={{ width:'100vw', height:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#0D0D0D', overflow:'hidden' }}>
+      <div style={{ width:W, height:H, position:'relative', transformOrigin:'center center', transform:`scale(${scale})`, flexShrink:0 }}>
+        {prev !== null && (() => {
+          const PrevSlide = SLIDES[prev];
+          return (
+            <div style={{ position:'absolute', inset:0, zIndex:1 }} className={dir > 0 ? 'exiting-fwd' : 'exiting-back'}>
+              <PrevSlide akey={animKeys[prev]} active={false}/>
+            </div>
+          );
+        })()}
+        <div style={{ position:'absolute', inset:0, zIndex:2 }} className={prev !== null ? (dir > 0 ? 'entering-fwd' : 'entering-back') : ''}>
+          {React.createElement(SLIDES[current], { akey: animKeys[current], active: prev === null, themeVer })}
+        </div>
+        <Chrome slide={current} total={TOTAL} onPrev={onPrev} onNext={onNext} light={isLight}/>
+      </div>
+      {showTweaks && (
+        <TweaksPanel onClose={() => {
+          setShowTweaks(false);
+          try { window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*'); } catch(e) {}
+        }}/>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

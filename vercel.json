@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/decks/(.*)", "destination": "/decks/$1" },
+    { "source": "/posts/(.*)", "destination": "/posts/$1" },
+    { "source": "/((?!decks|posts|assets).*)", "destination": "/index.html" }
+  ]
+}

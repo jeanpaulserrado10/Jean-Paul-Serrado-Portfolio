@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Volta — Brand Reveal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #000; overflow: hidden; }
+  #root { width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="animations.jsx"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo } = React;
+
+/* ─── helpers ─── */
+function lerp(a, b, t) { return a + (b - a) * t; }
+function ip(t, from, to, easing = Easing.linear) {
+  return interpolate(t, [0, 1], [from, to], easing);
+}
+
+/* ─── Particles (sparks) ─── */
+function Sparks({ count = 60, seed = 1, color = "#FFD066", active = true, cx = 640, cy = 360 }) {
+  const particles = useMemo(() => {
+    const rng = (s) => { let x = Math.sin(s * 9301 + seed * 49297) * 233280; return x - Math.floor(x); };
+    return Array.from({ length: count }, (_, i) => ({
+      angle: rng(i) * Math.PI * 2,
+      speed: 120 + rng(i + 100) * 360,
+      size:  1.5 + rng(i + 200) * 4,
+      life:  0.4 + rng(i + 300) * 0.6,
+      delay: rng(i + 400) * 0.8,
+    }));
+  }, [count, seed, color]);
+
+  const t = useTime();
+  if (!active) return null;
+
+  return (
+    <g>
+      {particles.map((p, i) => {
+        const local = Math.max(0, t - p.delay);
+        const progress = Math.min(local / p.life, 1);
+        if (progress === 0) return null;
+        const fade = 1 - Easing.easeInQuad(progress);
+        const dist = Easing.easeOutCubic(progress) * p.speed;
+        const x = cx + Math.cos(p.angle) * dist;
+        const y = cy + Math.sin(p.angle) * dist;
+        return (
+          <circle key={i}
+            cx={x} cy={y} r={p.size * (1 - progress * 0.5)}
+            fill={color} opacity={fade * 0.9}
+          />
+        );
+      })}
+    </g>
+  );
+}
+
+/* ─── Scan line ─── */
+function ScanLine({ color = "rgba(255,255,255,0.06)", speed = 0.15 }) {
+  const t = useTime();
+  const y = (t * speed * 720) % 720;
+  return <line x1={0} y1={y} x2={1280} y2={y} stroke={color} strokeWidth={1}/>;
+}
+
+/* ─── Kinetic letter ─── */
+function KLetter({ char, delay = 0, style = {} }) {
+  const t = useTime();
+  const p = Easing.easeOutBack(clamp((t - delay) / 0.5, 0, 1));
+  return (
+    <span style={{
+      display: 'inline-block',
+      transform: `translateY(${lerp(60, 0, p)}px)`,
+      opacity: p,
+      ...style
+    }}>{char}</span>
+  );
+}
+
+function KWord({ text, startDelay = 0, charDelay = 0.06, style = {}, charStyle = {} }) {
+  return (
+    <div style={{ overflow: 'hidden', display: 'inline-block', ...style }}>
+      {text.split('').map((ch, i) => (
+        <KLetter key={i} char={ch === ' ' ? '\u00A0' : ch}
+          delay={startDelay + i * charDelay} style={charStyle}/>
+      ))}
+    </div>
+  );
+}
+
+/* ─── Counter ─── */
+function Counter({ from, to, start, duration, suffix = '', prefix = '', style = {} }) {
+  const t = useTime();
+  const p = Easing.easeOutExpo(clamp((t - start) / duration, 0, 1));
+  const val = Math.round(lerp(from, to, p));
+  return (
+    <span style={style}>{prefix}{val.toLocaleString()}{suffix}</span>
+  );
+}
+
+/* ─── Clip reveal (horizontal wipe) ─── */
+function WipeReveal({ start, duration, children, style = {} }) {
+  const t = useTime();
+  const p = Easing.easeInOutExpo(clamp((t - start) / duration, 0, 1));
+  return (
+    <div style={{ overflow: 'hidden', ...style }}>
+      <div style={{ transform: `translateX(${lerp(-100, 0, p)}%)`, ...style }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Fade ─── */
+function Fade({ inAt, outAt, inDur = 0.6, outDur = 0.5, children, style = {} }) {
+  const t = useTime();
+  const fadeIn  = Easing.easeOutCubic(clamp((t - inAt) / inDur, 0, 1));
+  const fadeOut = outAt ? 1 - Easing.easeInCubic(clamp((t - outAt) / outDur, 0, 1)) : 1;
+  const opacity = Math.min(fadeIn, fadeOut);
+  return <div style={{ opacity, ...style }}>{children}</div>;
+}
+
+/* ─── Morph circle → bolt ─── */
+function VoltaBolt({ progress }) {
+  const r = lerp(200, 0, Easing.easeInExpo(Math.min(progress * 2, 1)));
+  const boltOpacity = Easing.easeOutCubic(clamp((progress - 0.4) / 0.6, 0, 1));
+
+  // Lightning bolt path
+  const boltPath = "M 640 120 L 580 380 L 640 380 L 570 640 L 720 300 L 650 300 Z";
+
+  return (
+    <g>
+      {/* Glow rings */}
+      {[280, 240, 200].map((cr, i) => (
+        <circle key={i} cx={640} cy={380} r={lerp(cr, cr * 0.5, progress)}
+          fill="none"
+          stroke={`rgba(255,208,40,${0.04 + i * 0.03})`}
+          strokeWidth={lerp(40, 0, progress)}
+        />
+      ))}
+      {/* Main circle morphing */}
+      <circle cx={640} cy={380} r={r}
+        fill="none" stroke="#FFD028" strokeWidth={2}
+        opacity={1 - progress}
+      />
+      {/* Bolt */}
+      <path d={boltPath}
+        fill="#FFD028"
+        opacity={boltOpacity}
+        filter="url(#boltGlow)"
+      />
+      {/* Bolt white core */}
+      <path d={boltPath} fill="rgba(255,255,255,0.6)" opacity={boltOpacity * 0.4}/>
+    </g>
+  );
+}
+
+/* ─── Grid lines background ─── */
+function GridBg({ opacity = 1 }) {
+  const cols = 16, rows = 9;
+  const w = 1280 / cols, h = 720 / rows;
+  return (
+    <g opacity={opacity}>
+      {Array.from({ length: cols + 1 }, (_, i) => (
+        <line key={`v${i}`} x1={i * w} y1={0} x2={i * w} y2={720}
+          stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>
+      ))}
+      {Array.from({ length: rows + 1 }, (_, i) => (
+        <line key={`h${i}`} x1={0} y1={i * h} x2={1280} y2={i * h}
+          stroke="rgba(255,255,255,0.04)" strokeWidth={1}/>
+      ))}
+    </g>
+  );
+}
+
+/* ─── Speed lines ─── */
+function SpeedLines({ active, progress }) {
+  const lines = useMemo(() =>
+    Array.from({ length: 30 }, (_, i) => ({
+      y: 40 + i * (720 / 30),
+      len: 200 + Math.sin(i * 2.3) * 300,
+      opacity: 0.1 + Math.abs(Math.sin(i * 1.7)) * 0.25,
+    })), []);
+
+  if (!active) return null;
+  const p = Easing.easeInOutExpo(progress);
+
+  return (
+    <g>
+      {lines.map((l, i) => (
+        <line key={i}
+          x1={lerp(1280, 1280 - l.len, p)} y1={l.y}
+          x2={lerp(1280, 1280, p)} y2={l.y}
+          stroke="rgba(255,208,40,0.4)"
+          strokeWidth={0.5 + Math.sin(i) * 0.5}
+          opacity={l.opacity * p}
+        />
+      ))}
+    </g>
+  );
+}
+
+/* ─── Arc progress ─── */
+function ArcStat({ cx, cy, r, value, maxVal, label, sublabel, color, startAng, inAt }) {
+  const t = useTime();
+  const p = Easing.easeOutExpo(clamp((t - inAt) / 1.2, 0, 1));
+  const angle = (value / maxVal) * 300 * p; // 300deg arc
+  const start = startAng - 150;
+  const end = start + angle;
+  const toRad = d => d * Math.PI / 180;
+  const x1 = cx + r * Math.cos(toRad(start));
+  const y1 = cy + r * Math.sin(toRad(start));
+  const x2 = cx + r * Math.cos(toRad(end));
+  const y2 = cy + r * Math.sin(toRad(end));
+  const large = angle > 180 ? 1 : 0;
+
+  const bgX1 = cx + r * Math.cos(toRad(startAng - 150));
+  const bgY1 = cy + r * Math.sin(toRad(startAng - 150));
+  const bgX2 = cx + r * Math.cos(toRad(startAng + 150));
+  const bgY2 = cy + r * Math.sin(toRad(startAng + 150));
+
+  return (
+    <g opacity={Easing.easeOutCubic(clamp((t - inAt) / 0.6, 0, 1))}>
+      {/* track */}
+      <path d={`M ${bgX1} ${bgY1} A ${r} ${r} 0 1 1 ${bgX2} ${bgY2}`}
+        fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth={4} strokeLinecap="round"/>
+      {/* fill */}
+      {angle > 0 &&
+        <path d={`M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}`}
+          fill="none" stroke={color} strokeWidth={4} strokeLinecap="round"/>}
+      {/* dot at end */}
+      {p > 0.05 &&
+        <circle cx={x2} cy={y2} r={6} fill={color}
+          style={{ filter: `drop-shadow(0 0 8px ${color})` }}/>}
+      {/* labels */}
+      <text x={cx} y={cy - 14} textAnchor="middle"
+        fontFamily="'Bebas Neue', sans-serif" fontSize={52} fill="white" letterSpacing={2}>
+        <Counter from={0} to={value} start={inAt} duration={1.2} style={{}}/>
+      </text>
+      <text x={cx} y={cy + 14} textAnchor="middle"
+        fontFamily="'JetBrains Mono', monospace" fontSize={12}
+        fill="rgba(255,255,255,0.5)" letterSpacing={3} textTransform="uppercase">{label}</text>
+      <text x={cx} y={cy + 34} textAnchor="middle"
+        fontFamily="'JetBrains Mono', monospace" fontSize={11}
+        fill={color} letterSpacing={2}>{sublabel}</text>
+    </g>
+  );
+}
+
+/* ════════════════════════════════════════════════════════
+   SCENES
+════════════════════════════════════════════════════════ */
+
+/* Scene 1: 0–14s — Logo reveal */
+function Scene1() {
+  const t = useTime();
+  const boltP = Easing.easeInOutCubic(clamp((t - 2) / 4, 0, 1));
+  const wordP  = clamp((t - 5) / 1, 0, 1);
+  const tagP   = Easing.easeOutCubic(clamp((t - 7) / 1, 0, 1));
+  const exitP  = Easing.easeInExpo(clamp((t - 12) / 1.5, 0, 1));
+
+  return (
+    <Sprite start={0} end={14}>
+      <svg width="1280" height="720" viewBox="0 0 1280 720"
+        style={{ position:'absolute', inset:0 }}>
+        <defs>
+          <filter id="boltGlow">
+            <feGaussianBlur stdDeviation="8" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+          <radialGradient id="bgGrad" cx="50%" cy="55%" r="55%">
+            <stop offset="0%" stopColor="#1A1500"/>
+            <stop offset="100%" stopColor="#000000"/>
+          </radialGradient>
+        </defs>
+        <rect width="1280" height="720" fill="url(#bgGrad)" opacity={1 - exitP}/>
+        <GridBg opacity={(1 - exitP) * 0.8}/>
+
+        {/* Ripple rings expanding from center */}
+        {[0, 0.3, 0.6].map((d, i) => {
+          const rp = Easing.easeOutExpo(clamp((t - d) / 2, 0, 1));
+          return (
+            <circle key={i} cx={640} cy={380}
+              r={rp * 320}
+              fill="none"
+              stroke={`rgba(255,208,40,${0.12 - i * 0.03})`}
+              strokeWidth={1}
+              opacity={1 - rp * 0.8}
+            />
+          );
+        })}
+
+        <VoltaBolt progress={boltP}/>
+
+        {/* Sparks burst at t=2 */}
+        <Sparks count={80} seed={42} color="#FFD028" cx={640} cy={380}/>
+
+        <ScanLine color="rgba(255,208,40,0.05)"/>
+
+        {/* Fade out white flash at start */}
+        <rect width="1280" height="720" fill="white"
+          opacity={Math.max(0, 1 - t * 4)}/>
+
+        {/* Whole scene fade out */}
+        <rect width="1280" height="720" fill="black" opacity={exitP}/>
+      </svg>
+
+      {/* VOLTA wordmark */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 220,
+          letterSpacing: 40,
+          color: '#fff',
+          lineHeight: 1,
+          opacity: Easing.easeOutExpo(wordP) * (1 - exitP),
+          transform: `scale(${lerp(0.92, 1, Easing.easeOutBack(wordP))})`,
+          textShadow: '0 0 80px rgba(255,208,40,0.4)',
+          marginTop: 40,
+        }}>
+          VOLTA
+        </div>
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 14,
+          letterSpacing: 10,
+          color: '#FFD028',
+          textTransform: 'uppercase',
+          marginTop: 12,
+          opacity: tagP * (1 - exitP),
+          transform: `translateY(${lerp(10, 0, tagP)}px)`,
+        }}>
+          THE ELECTRIC AGE BEGINS
+        </div>
+      </div>
+    </Sprite>
+  );
+}
+
+/* Scene 2: 14–28s — "Not a car. A statement." */
+function Scene2() {
+  const t = useTime();
+  // local time within this scene
+  const lt = t - 14;
+  const exitP = Easing.easeInExpo(clamp((t - 26) / 2, 0, 1));
+  const enterP = Easing.easeOutCubic(clamp(lt / 0.8, 0, 1));
+
+  return (
+    <Sprite start={13.5} end={28}>
+      <svg width="1280" height="720" viewBox="0 0 1280 720"
+        style={{ position:'absolute', inset:0 }}>
+        <defs>
+          <linearGradient id="s2bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#000000"/>
+            <stop offset="100%" stopColor="#0A0600"/>
+          </linearGradient>
+        </defs>
+        <rect width="1280" height="720" fill="url(#s2bg)"/>
+        <GridBg opacity={0.6}/>
+
+        {/* Accent line left */}
+        <line x1={80} y1={0} x2={80} y2={720}
+          stroke="rgba(255,208,40,0.15)" strokeWidth={1}
+          opacity={enterP}/>
+
+        {/* Large "NOT" background ghost text */}
+        <text x={-20} y={500}
+          fontFamily="'Bebas Neue', sans-serif" fontSize={520}
+          fill="rgba(255,255,255,0.02)" letterSpacing={20}>
+          NOT
+        </text>
+
+        <SpeedLines active={lt > 1.5} progress={clamp((lt - 1.5) / 3, 0, 1)}/>
+        <ScanLine color="rgba(255,208,40,0.04)"/>
+
+        <rect width="1280" height="720" fill="black" opacity={exitP}/>
+        <rect width="1280" height="720" fill="black"
+          opacity={Math.max(0, 1 - enterP)}/>
+      </svg>
+
+      <div style={{
+        position: 'absolute', inset: 0,
+        padding: '0 120px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        opacity: enterP * (1 - exitP),
+      }}>
+        {/* Label */}
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 13, letterSpacing: 8, color: '#FFD028',
+          textTransform: 'uppercase', marginBottom: 48,
+          opacity: clamp((lt - 0.3) / 0.5, 0, 1),
+        }}>
+          — 01 MANIFESTO
+        </div>
+
+        {/* Main line 1 */}
+        <div style={{ overflow: 'hidden', marginBottom: 8 }}>
+          <div style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 190, letterSpacing: 10, lineHeight: 0.9,
+            color: 'white',
+            transform: `translateY(${lerp(100, 0, Easing.easeOutExpo(clamp((lt - 0.2) / 0.7, 0, 1)))}%)`,
+          }}>
+            NOT A CAR.
+          </div>
+        </div>
+
+        {/* Main line 2 — yellow */}
+        <div style={{ overflow: 'hidden', marginBottom: 64 }}>
+          <div style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 190, letterSpacing: 10, lineHeight: 0.9,
+            color: '#FFD028',
+            filter: 'drop-shadow(0 0 30px rgba(255,208,40,0.5))',
+            transform: `translateY(${lerp(100, 0, Easing.easeOutExpo(clamp((lt - 0.55) / 0.7, 0, 1)))}%)`,
+          }}>
+            A STATEMENT.
+          </div>
+        </div>
+
+        {/* Body copy — staggered lines */}
+        {[
+          'Built for those who move faster than the world expects.',
+          '0 → 100 km/h in 2.4 seconds. Zero emissions. Zero apologies.',
+        ].map((line, i) => (
+          <div key={i} style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: 26, fontWeight: 300,
+            color: 'rgba(255,255,255,0.6)',
+            lineHeight: 1.5, marginBottom: 8,
+            opacity: Easing.easeOutCubic(clamp((lt - 1.8 - i * 0.3) / 0.6, 0, 1)),
+            transform: `translateX(${lerp(-20, 0, Easing.easeOutCubic(clamp((lt - 1.8 - i * 0.3) / 0.6, 0, 1)))}px)`,
+          }}>
+            {line}
+          </div>
+        ))}
+      </div>
+    </Sprite>
+  );
+}
+
+/* Scene 3: 28–46s — Specs / arc stats */
+function Scene3() {
+  const t = useTime();
+  const lt = t - 28;
+  const enterP = Easing.easeOutCubic(clamp(lt / 0.9, 0, 1));
+  const exitP  = Easing.easeInExpo(clamp((t - 44) / 2, 0, 1));
+
+  return (
+    <Sprite start={27.5} end={46}>
+      <svg width="1280" height="720" viewBox="0 0 1280 720"
+        style={{ position:'absolute', inset:0 }}>
+        <defs>
+          <radialGradient id="s3bg" cx="50%" cy="50%" r="70%">
+            <stop offset="0%" stopColor="#050402"/>
+            <stop offset="100%" stopColor="#000"/>
+          </radialGradient>
+        </defs>
+        <rect width="1280" height="720" fill="url(#s3bg)"/>
+        <GridBg opacity={0.5}/>
+        <ScanLine color="rgba(255,208,40,0.04)"/>
+
+        {/* Divider lines */}
+        {[427, 854].map((x, i) => (
+          <line key={i} x1={x} y1={80} x2={x} y2={640}
+            stroke="rgba(255,255,255,0.08)" strokeWidth={1}
+            opacity={enterP}/>
+        ))}
+        <line x1={80} y1={620} x2={1200} y2={620}
+          stroke="rgba(255,208,40,0.2)" strokeWidth={1}
+          opacity={enterP}/>
+
+        {/* Arc stats */}
+        <ArcStat cx={213} cy={340} r={130} value={240} maxVal={300}
+          label="TOP SPEED" sublabel="KM/H" color="#FFD028"
+          startAng={-90} inAt={29}/>
+        <ArcStat cx={640} cy={340} r={130} value={520} maxVal={600}
+          label="RANGE" sublabel="KILOMETERS" color="#4DFFB8"
+          startAng={-90} inAt={30}/>
+        <ArcStat cx={1067} cy={340} r={130} value={24} maxVal={60}
+          label="CHARGE" sublabel="MIN TO 80%" color="#FF6B4A"
+          startAng={-90} inAt={31}/>
+
+        {/* Bottom stat row */}
+        {[
+          { label: "HORSEPOWER", val: "1,020 HP", color: "#FFD028" },
+          { label: "0–100 KM/H", val: "2.4s", color: "#4DFFB8" },
+          { label: "EFFICIENCY", val: "16 kWh/100km", color: "#FF6B4A" },
+          { label: "WEIGHT", val: "1,850 kg", color: "white" },
+        ].map((s, i) => (
+          <g key={i}
+            opacity={Easing.easeOutCubic(clamp((lt - 2 - i * 0.15) / 0.5, 0, 1))}>
+            <text x={160 + i * 300} y={655}
+              fontFamily="'JetBrains Mono', monospace"
+              fontSize={11} letterSpacing={3} fill="rgba(255,255,255,0.4)"
+              textAnchor="middle">{s.label}</text>
+            <text x={160 + i * 300} y={680}
+              fontFamily="'Bebas Neue', sans-serif"
+              fontSize={32} letterSpacing={2} fill={s.color}
+              textAnchor="middle">{s.val}</text>
+          </g>
+        ))}
+
+        <rect width="1280" height="720" fill="black" opacity={exitP}/>
+        <rect width="1280" height="720" fill="black" opacity={Math.max(0, 1 - enterP)}/>
+      </svg>
+
+      <div style={{
+        position: 'absolute', top: 70, left: 0, right: 0,
+        textAlign: 'center',
+        opacity: enterP * (1 - exitP),
+      }}>
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 12, letterSpacing: 8, color: '#FFD028',
+          textTransform: 'uppercase', marginBottom: 8,
+        }}>— 02 PERFORMANCE</div>
+        <div style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 60, letterSpacing: 8, color: 'white',
+        }}>ENGINEERED WITHOUT COMPROMISE</div>
+      </div>
+    </Sprite>
+  );
+}
+
+/* Scene 4: 46–62s — Features (3 pillars) */
+function Scene4() {
+  const t = useTime();
+  const lt = t - 46;
+  const enterP = Easing.easeOutCubic(clamp(lt / 0.9, 0, 1));
+  const exitP  = Easing.easeInExpo(clamp((t - 60) / 2, 0, 1));
+
+  const pillars = [
+    {
+      num: '01', title: 'AUTOPILOT\nEVOLVED', body: 'Neural-mesh sensors. 360° real-time mapping. Learns every route, anticipates every move.',
+      color: '#FFD028', icon: 'M 60 60 L 60 100 L 100 100 L 100 60 Z M 40 80 L 20 80 M 120 80 L 140 80 M 80 40 L 80 20 M 80 120 L 80 140',
+    },
+    {
+      num: '02', title: 'SOLID-STATE\nBATTERY', body: '520km on a single charge. Charges to 80% in 24 minutes. Built to last 1 million kilometres.',
+      color: '#4DFFB8', icon: 'M 30 50 L 30 110 L 130 110 L 130 50 Z M 130 65 L 148 65 L 148 95 L 130 95',
+    },
+    {
+      num: '03', title: 'ADAPTIVE\nAERODYNAMICS', body: 'Active morphing bodywork. Drag coefficient 0.16 Cd — the lowest of any production car ever made.',
+      color: '#FF6B4A', icon: 'M 20 80 Q 80 20 140 80 Q 80 140 20 80 Z',
+    },
+  ];
+
+  return (
+    <Sprite start={45.5} end={62}>
+      <svg width="1280" height="720" viewBox="0 0 1280 720"
+        style={{ position:'absolute', inset:0 }}>
+        <rect width="1280" height="720" fill="#000"/>
+        <GridBg opacity={0.5}/>
+        <ScanLine color="rgba(255,208,40,0.04)"/>
+
+        {/* vertical dividers */}
+        {[427, 854].map((x, i) => (
+          <line key={i} x1={x} y1={160} x2={x} y2={680}
+            stroke="rgba(255,255,255,0.08)" strokeWidth={1}
+            opacity={enterP}/>
+        ))}
+
+        {pillars.map((p, i) => {
+          const cardP = Easing.easeOutBack(clamp((lt - 0.3 - i * 0.25) / 0.8, 0, 1));
+          const cx = 213 + i * 427;
+          return (
+            <g key={i} opacity={cardP}>
+              {/* Icon box */}
+              <rect x={cx - 85} y={220} width={170} height={170}
+                fill="none" stroke={p.color} strokeWidth={1}
+                opacity={0.3}/>
+              <g transform={`translate(${cx - 80}, 225)`}>
+                <path d={p.icon} fill="none" stroke={p.color}
+                  strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/>
+              </g>
+              {/* Number */}
+              <text x={cx - 80} y={200}
+                fontFamily="'JetBrains Mono', monospace"
+                fontSize={13} letterSpacing={4} fill={p.color}>{p.num}</text>
+              {/* Accent dot */}
+              <circle cx={cx} cy={440} r={4} fill={p.color}
+                style={{ filter: `drop-shadow(0 0 8px ${p.color})` }}/>
+            </g>
+          );
+        })}
+
+        <rect width="1280" height="720" fill="black" opacity={exitP}/>
+        <rect width="1280" height="720" fill="black" opacity={Math.max(0, 1 - enterP)}/>
+      </svg>
+
+      <div style={{
+        position: 'absolute', inset: 0,
+        pointerEvents: 'none',
+        opacity: enterP * (1 - exitP),
+      }}>
+        {/* Header */}
+        <div style={{
+          textAlign: 'center', paddingTop: 70,
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 12, letterSpacing: 8, color: '#FFD028',
+          textTransform: 'uppercase', marginBottom: 8,
+        }}>— 03 TECHNOLOGY</div>
+        <div style={{
+          textAlign: 'center',
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 60, letterSpacing: 8, color: 'white',
+        }}>THREE IDEAS. ONE MACHINE.</div>
+
+        {/* Pillar text */}
+        <div style={{
+          position: 'absolute', bottom: 40, left: 0, right: 0,
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+        }}>
+          {pillars.map((p, i) => {
+            const cardP = Easing.easeOutBack(clamp((lt - 0.3 - i * 0.25) / 0.8, 0, 1));
+            return (
+              <div key={i} style={{
+                padding: '0 60px',
+                textAlign: 'center',
+                opacity: cardP,
+                transform: `translateY(${lerp(20, 0, cardP)}px)`,
+              }}>
+                <div style={{
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: 38, letterSpacing: 4,
+                  color: p.color, lineHeight: 1.1,
+                  whiteSpace: 'pre-line', marginBottom: 12,
+                }}>{p.title}</div>
+                <div style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 18, fontWeight: 300,
+                  color: 'rgba(255,255,255,0.55)',
+                  lineHeight: 1.55,
+                }}>{p.body}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Sprite>
+  );
+}
+
+/* Scene 5: 62–80s — Closing */
+function Scene5() {
+  const t = useTime();
+  const lt = t - 62;
+  const enterP = Easing.easeOutCubic(clamp(lt / 1, 0, 1));
+
+  return (
+    <Sprite start={61.5} end={80}>
+      <svg width="1280" height="720" viewBox="0 0 1280 720"
+        style={{ position:'absolute', inset:0 }}>
+        <defs>
+          <radialGradient id="s5bg" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stopColor="#120E00"/>
+            <stop offset="100%" stopColor="#000"/>
+          </radialGradient>
+          <filter id="glowY">
+            <feGaussianBlur stdDeviation="20" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+        <rect width="1280" height="720" fill="url(#s5bg)"/>
+        <GridBg opacity={enterP * 0.5}/>
+
+        {/* Glow orb */}
+        <circle cx={640} cy={380} r={280}
+          fill="none"
+          stroke="rgba(255,208,40,0.06)"
+          strokeWidth={120}
+          opacity={enterP}/>
+        <circle cx={640} cy={380} r={180}
+          fill="none"
+          stroke="rgba(255,208,40,0.08)"
+          strokeWidth={60}
+          opacity={enterP}/>
+
+        {/* Bolt again, small, centered */}
+        <g transform="translate(561, 260) scale(0.5)" opacity={enterP * 0.9}
+          filter="url(#glowY)">
+          <path d="M 640 120 L 580 380 L 640 380 L 570 640 L 720 300 L 650 300 Z"
+            fill="#FFD028"/>
+        </g>
+
+        {/* Sparks continuous */}
+        {lt > 0.5 && <Sparks count={40} seed={99} color="#FFD028" cx={640} cy={380}/>}
+
+        <ScanLine color="rgba(255,208,40,0.06)"/>
+        <rect width="1280" height="720" fill="black" opacity={Math.max(0, 1 - enterP)}/>
+      </svg>
+
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        textAlign: 'center',
+        opacity: enterP,
+        padding: '0 120px',
+      }}>
+        <div style={{ overflow: 'hidden' }}>
+          <div style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 150, letterSpacing: 16, lineHeight: 0.9,
+            color: 'white',
+            transform: `translateY(${lerp(80, 0, Easing.easeOutExpo(clamp((lt - 0.1) / 0.8, 0, 1)))}px)`,
+          }}>THE FUTURE</div>
+        </div>
+        <div style={{ overflow: 'hidden' }}>
+          <div style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: 150, letterSpacing: 16, lineHeight: 0.9,
+            color: '#FFD028',
+            filter: 'drop-shadow(0 0 40px rgba(255,208,40,0.6))',
+            transform: `translateY(${lerp(80, 0, Easing.easeOutExpo(clamp((lt - 0.45) / 0.8, 0, 1)))}px)`,
+          }}>DRIVES ITSELF.</div>
+        </div>
+
+        <div style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 22, fontWeight: 300,
+          color: 'rgba(255,255,255,0.5)',
+          marginTop: 56, letterSpacing: 1,
+          opacity: Easing.easeOutCubic(clamp((lt - 1.4) / 0.8, 0, 1)),
+        }}>
+          Reserve yours at volta.car
+        </div>
+
+        <div style={{
+          marginTop: 40,
+          display: 'flex', gap: 24, alignItems: 'center',
+          opacity: Easing.easeOutCubic(clamp((lt - 2) / 0.8, 0, 1)),
+        }}>
+          {['STARTING AT €89,000', 'DELIVERIES Q4 2026', 'LIMITED — 2,500 UNITS'].map((tag, i) => (
+            <div key={i} style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 12, letterSpacing: 5,
+              color: i === 0 ? '#FFD028' : 'rgba(255,255,255,0.4)',
+              textTransform: 'uppercase',
+              padding: '8px 20px',
+              border: `1px solid ${i === 0 ? 'rgba(255,208,40,0.4)' : 'rgba(255,255,255,0.1)'}`,
+              borderRadius: 2,
+            }}>{tag}</div>
+          ))}
+        </div>
+
+        {/* Wordmark bottom */}
+        <div style={{
+          position: 'absolute', bottom: 48,
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 24, letterSpacing: 16,
+          color: 'rgba(255,255,255,0.25)',
+          opacity: Easing.easeOutCubic(clamp((lt - 2.5) / 0.8, 0, 1)),
+        }}>VOLTA · ELECTRIC VEHICLES · EST. 2026</div>
+      </div>
+    </Sprite>
+  );
+}
+
+/* ════════════════════════════════════════════════════════
+   ROOT
+════════════════════════════════════════════════════════ */
+function VoltaFilm() {
+  return (
+    <Stage width={1280} height={720} duration={80} background="#000000">
+      <Scene1/>
+      <Scene2/>
+      <Scene3/>
+      <Scene4/>
+      <Scene5/>
+    </Stage>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<VoltaFilm/>);
+</script>
+</body>
+</html>

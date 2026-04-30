@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Marrow — Series A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  /* ---------- Design tokens ---------- */
+  :root {
+    /* light (default) */
+    --bone:     #F3EEE5;
+    --bone-2:   #E8E0D1;
+    --paper:    #FAF6EF;
+    --ink:      #1A1714;
+    --ink-2:    #2E2923;
+    --muted:    #7B736A;
+    --rule:     #C9BFAF;
+    --accent:   #B14A2C;   /* terracotta */
+    --accent-2: #5E6B3D;   /* olive */
+    --swatch:   #C3A27A;   /* cafe au lait */
+  }
+  [data-theme="dark"] {
+    --bone:     #16130F;
+    --bone-2:   #1E1A15;
+    --paper:    #0E0B08;
+    --ink:      #F3EEE5;
+    --ink-2:    #D7CEBF;
+    --muted:    #8E8678;
+    --rule:     #3A332B;
+    --accent:   #D76A48;
+    --accent-2: #8AA06A;
+    --swatch:   #B8966F;
+  }
+
+  html, body {
+    margin: 0;
+    background: #000;
+    font-family: "Inter", -apple-system, Helvetica, Arial, sans-serif;
+    color: var(--ink);
+  }
+
+  /* ---------- Slide base ---------- */
+  .slide {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: "Inter", sans-serif;
+    font-size: 28px;
+    line-height: 1.45;
+    letter-spacing: -0.005em;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    flex-direction: column;
+    padding: 100px 100px 140px;
+    box-sizing: border-box;
+  }
+  .slide.paper  { background: var(--paper); }
+  .slide.ink    { background: var(--ink); color: var(--bone); }
+  .slide.bone2  { background: var(--bone-2); }
+
+  /* type */
+  .serif  { font-family: "Fraunces", "Times New Roman", serif; font-weight: 400; letter-spacing: -0.015em; }
+  .mono   { font-family: "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0; }
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 18px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .eyebrow .dot {
+    display: inline-block;
+    width: 8px; height: 8px; border-radius: 99px;
+    background: var(--accent);
+    margin-right: 14px;
+    transform: translateY(-2px);
+    vertical-align: middle;
+  }
+  h1.title {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 120px;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin: 0;
+    color: var(--ink);
+    font-variation-settings: "opsz" 144;
+  }
+  h2.headline {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 72px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-wrap: balance;
+    font-variation-settings: "opsz" 96;
+  }
+  h2.headline em {
+    font-style: italic;
+    color: var(--accent);
+    font-variation-settings: "opsz" 144;
+  }
+  .lede {
+    font-family: "Fraunces", serif;
+    font-size: 44px;
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+    font-weight: 300;
+    text-wrap: pretty;
+    font-variation-settings: "opsz" 72;
+  }
+  .body {
+    font-size: 26px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    text-wrap: pretty;
+  }
+  .small {
+    font-size: 20px;
+    color: var(--muted);
+  }
+
+  /* page chrome */
+  .page-chrome {
+    position: absolute;
+    left: 100px;
+    right: 100px;
+    bottom: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .page-chrome .rule {
+    position: absolute;
+    left: 0; right: 0; top: -24px;
+    height: 1px; background: var(--rule);
+  }
+  .page-chrome .wordmark {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--ink);
+  }
+  .page-chrome .wordmark .mark {
+    width: 18px; height: 18px; border-radius: 99px;
+    background: var(--ink);
+    position: relative;
+  }
+  .page-chrome .wordmark .mark::after {
+    content: ""; position: absolute; inset: 5px;
+    border-radius: 99px; background: var(--bone);
+  }
+
+  .top-chrome {
+    position: absolute;
+    left: 100px; right: 100px; top: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .top-chrome .rule {
+    position: absolute;
+    left: 0; right: 0; bottom: -24px;
+    height: 1px; background: var(--rule);
+  }
+  .slide.ink .top-chrome,
+  .slide.ink .page-chrome { color: rgba(243,238,229,0.55); }
+  .slide.ink .top-chrome .rule,
+  .slide.ink .page-chrome .rule { background: rgba(243,238,229,0.18); }
+  .slide.ink .page-chrome .wordmark { color: var(--bone); }
+  .slide.ink .page-chrome .wordmark .mark { background: var(--bone); }
+  .slide.ink .page-chrome .wordmark .mark::after { background: var(--ink); }
+
+  /* ---------- Decorative ---------- */
+  .ring {
+    width: 260px; height: 260px;
+    border-radius: 99px;
+    border: 1px solid var(--rule);
+    position: relative;
+  }
+  .ring::after {
+    content: "";
+    position: absolute; inset: 34px;
+    border-radius: 99px;
+    background: radial-gradient(circle at 35% 30%, var(--swatch), #6B4A2B 85%);
+  }
+
+  /* placeholder "photo" block */
+  .photo {
+    background:
+      linear-gradient(135deg, rgba(26,23,20,0.05), rgba(26,23,20,0.15)),
+      repeating-linear-gradient(45deg, var(--bone-2) 0 18px, var(--bone) 18px 36px);
+    position: relative;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+  .photo .caption {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    background: var(--paper);
+    border-top: 1px solid var(--rule);
+    padding: 14px 18px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .photo .caption .k { color: var(--muted); }
+  [data-theme="dark"] .photo .caption { background: var(--bone-2); color: var(--ink); }
+
+  /* ---------- Utility layouts ---------- */
+  .grid { display: grid; gap: 40px; }
+  .col-2 { grid-template-columns: 1fr 1fr; }
+  .col-3 { grid-template-columns: repeat(3, 1fr); }
+  .col-12 { grid-template-columns: repeat(12, 1fr); }
+  .flex   { display: flex; }
+  .between{ justify-content: space-between; }
+  .center { align-items: center; }
+  .end    { align-items: flex-end; }
+
+  /* ---------- Theme toggle ---------- */
+  #tweak-panel {
+    position: fixed; right: 24px; top: 24px;
+    z-index: 9999;
+    background: rgba(16,13,10,0.9);
+    color: #F3EEE5;
+    border: 1px solid rgba(243,238,229,0.2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: none;
+    min-width: 220px;
+    backdrop-filter: blur(10px);
+  }
+  #tweak-panel[data-visible] { display: block; }
+  #tweak-panel h4 { margin: 0 0 10px; font-size: 11px; letter-spacing: 0.16em; opacity: 0.55; font-weight: 500; }
+  #tweak-panel .seg {
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: rgba(243,238,229,0.06);
+    border-radius: 10px; padding: 3px; gap: 2px;
+  }
+  #tweak-panel .seg button {
+    appearance: none; background: transparent; color: inherit;
+    border: 0; padding: 9px 12px; font: inherit; cursor: pointer;
+    border-radius: 8px; letter-spacing: 0.1em;
+  }
+  #tweak-panel .seg button[aria-pressed="true"] {
+    background: #F3EEE5; color: #16130F;
+  }
+</style>
+</head>
+<body>
+
+<script type="application/json" id="speaker-notes">
+[
+  "Good morning. I want to tell you about Marrow. We're building the specialty coffee subscription for people who've outgrown grocery-store bags — and we're doing it by cutting the distance between a farmer and a cup down to four people and twelve weeks. I'll walk you through the problem we saw, what we've built, the numbers, and what we need from you to keep going.",
+  "Here's the tension. Americans drink more coffee than ever — but almost none of it is fresh, and almost none of the money makes it back to the people who grew it. The average bag you buy at the grocery store was roasted four months ago. And on a four-dollar latte, the farmer sees about four cents. So we have a category that's simultaneously massive, stale, and extractive. That's the gap.",
+  "And that gap is starting to close, fast. Specialty is the fastest-growing segment in coffee. Subscription retention for premium food has tripled in five years. And — this is the one we pay attention to — over sixty percent of coffee drinkers under thirty-five now say origin matters to them. That wasn't true a decade ago. The audience has grown up.",
+  "So: Marrow. One sentence. We ship single-origin coffee from small farms to your door within twelve weeks of harvest. That's it. The discipline of that sentence is the whole company. Twelve weeks is fast enough to matter and slow enough to be real. Single-origin is how you taste a place. And small farms is where the flavor — and the margin we share — actually lives.",
+  "Here's how it works end to end. A member takes a two-minute taste profile. We match them to a farmer — not a blend, a person. Beans are roasted to order within seventy-two hours of the order being placed, and shipped in a compostable nitrogen-flushed pouch. Every bag has a QR code that shows the farmer, the lot, the harvest date, and the price paid. The loop is: taste, match, roast, ship, trace. We own each step.",
+  "The market. US specialty coffee is a fourteen-billion-dollar category and it's growing seven percent a year. Our serviceable wedge — direct-to-consumer premium subscription — is about one-point-eight billion today and compounding at eighteen percent. Within that, we estimate our reachable slice over the next three years at around four hundred million. These aren't aspirational numbers; they're filtered through actual retention data from our first eighteen months.",
+  "Traction. Eighteen months in. Eight thousand four hundred paying subscribers. Recurring revenue just crossed four hundred K a month, growing nineteen percent month over month for the last six. Net revenue retention is one-twenty-eight. Gross margin is sixty-one percent and climbing as roasting scales. What matters most on this slide is the shape of the curves — they're not hockey-stick fiction, they're compounding.",
+  "The economics hold up under scrutiny. We acquire a member for about thirty-two dollars. They stay, on average, fourteen months. Lifetime value is two-ninety-one. So we're at a nine-to-one LTV-to-CAC, and we pay back acquisition in month two. On the cost side: twenty-two percent of every dollar goes directly to the farmer — roughly six times the industry average. Premium pricing funds premium sourcing. The math is deliberate.",
+  "Competition. On one axis, price. On the other, traceability — how much you actually know about where your coffee came from. The grocery aisle is cheap and opaque. Specialty roasters are expensive and regional. Subscription incumbents are convenient but blend-first. Marrow sits in the upper-right: premium, transparent, direct. That's a defensible corner because it's the hardest to reach — you have to own the supply chain to live there.",
+  "The roadmap. This year we deepen: more origins, better matching, a loyalty program that ties back to specific farms. Next year we broaden — cold brew, ready-to-drink, a gifting product that we think is a meaningful standalone business. And in twenty-twenty-seven we open the platform up to other independent roasters. That last one is the quiet bet — Marrow becomes infrastructure for a category that currently has none.",
+  "The team. Four founders, fifteen years of coffee between us. Ana ran origin sourcing at a top-twenty-five specialty roaster. Mateo scaled a DTC food brand from zero to forty million. Priya built the ops systems that run a national cold-chain network. I handle the product and the story. We're advised by two of the most respected names in specialty and one former CPG operator. The bench is deep.",
+  "The ask. We're raising a six-million-dollar Series A to fund eighteen months of runway. Roughly forty percent goes to growth — paid, partnerships, brand. Thirty-five percent to operations — a second roasting facility on the east coast, cutting shipping time by two days. Fifteen percent to origin — deeper relationships, longer contracts, better prices for farmers. Ten percent reserve. That's the plan. Thank you — I'd love to talk through questions."
+]
+</script>
+
+<deck-stage width="1920" height="1080">
+
+  <!-- ============ 01 Cover ============ -->
+  <section data-label="Cover" class="slide paper" style="padding: 0;">
+    <div style="position:absolute; inset:0; display:grid; grid-template-columns: 1.1fr 1fr;">
+      <div style="padding: 100px; display:flex; flex-direction:column; justify-content:space-between;">
+        <div class="eyebrow"><span class="dot"></span>Series A · Confidential · April 2026</div>
+        <div>
+          <div class="serif" style="font-size:40px; line-height:1.1; color:var(--muted); font-style: italic; margin-bottom: 28px;">A pitch from —</div>
+          <h1 class="title" style="font-size:220px;">Marrow<span style="color:var(--accent);">.</span></h1>
+          <div style="margin-top: 40px; max-width: 680px;" class="lede">
+            Single-origin coffee from small farms, in your kitchen within twelve weeks of harvest.
+          </div>
+        </div>
+        <div class="flex between" style="align-items:flex-end;">
+          <div class="mono small">marrow.coffee &nbsp;·&nbsp; @marrowcoffee</div>
+          <div class="mono small">Vol. 01 &nbsp;—&nbsp; 12 pp.</div>
+        </div>
+      </div>
+      <div style="background: var(--ink); color: var(--bone); position:relative; overflow:hidden;">
+        <div class="photo" style="position:absolute; inset:0; border:0; background:
+          linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.45)),
+          repeating-linear-gradient(38deg, #2A1F16 0 14px, #1A1209 14px 28px);">
+          <div class="caption" style="background: rgba(20,15,10,0.75); color:var(--bone); border-top:1px solid rgba(243,238,229,0.15);">
+            <span class="k">FIG. 01 —</span> WASHING STATION, HUILA · COL · HARVEST 2026
+          </div>
+        </div>
+        <div style="position:absolute; top:56px; right:56px; font-family:'JetBrains Mono',monospace; font-size:14px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(243,238,229,0.7);">
+          MR.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 The Coffee Problem ============ -->
+  <section data-label="The Coffee Problem" class="slide">
+    <div class="top-chrome">
+      <span>§ 01 — Problem</span><span>02 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 100px; margin-top: 140px; flex:1;">
+      <div style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="eyebrow" style="margin-bottom: 40px;"><span class="dot"></span>The coffee problem</div>
+        <h2 class="headline" style="font-size:96px;">
+          Coffee is <em>older</em>, <em>farther</em>, and <em>unfairer</em> than it has ever been.
+        </h2>
+        <p class="body" style="margin-top: 48px; max-width: 720px;">
+          The category grew into a $90B global juggernaut by industrializing distance. Speed, freshness, and fairness were quietly sacrificed to make it work at scale.
+        </p>
+      </div>
+      <div style="display:flex; flex-direction:column; justify-content:center; gap: 44px;">
+        <div>
+          <div class="serif" style="font-size: 180px; line-height:0.9; color:var(--accent); font-variation-settings:'opsz' 144;">4<span style="font-size:72px; vertical-align: super;">mo</span></div>
+          <div class="small" style="margin-top:8px; border-top:1px solid var(--rule); padding-top:14px;">Average age of a grocery-store bag when you open it.</div>
+        </div>
+        <div>
+          <div class="serif" style="font-size: 180px; line-height:0.9; color:var(--accent-2); font-variation-settings:'opsz' 144;">4¢</div>
+          <div class="small" style="margin-top:8px; border-top:1px solid var(--rule); padding-top:14px;">Farmer's share of a $4 latte at a typical café.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Problem · Age &amp; extraction</span>
+      <span>P. 02</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 03 A Quiet Shift ============ -->
+  <section data-label="A Quiet Shift" class="slide bone2">
+    <div class="top-chrome">
+      <span>§ 02 — Why now</span><span>03 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 140px; max-width: 1400px;">
+      <div class="eyebrow" style="margin-bottom: 36px;"><span class="dot"></span>A quiet shift</div>
+      <h2 class="headline" style="font-size:88px; max-width: 1500px;">
+        A generation that grew up on <em>Instagram</em> is finally old enough to care where their coffee comes from.
+      </h2>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 56px; margin-top: 90px;">
+      <div>
+        <div class="mono" style="font-size:16px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);">01 — Category</div>
+        <div class="serif" style="font-size: 150px; line-height:0.95; margin-top:18px; font-variation-settings:'opsz' 144;">+11<span style="font-size:60px;">%</span></div>
+        <div class="body" style="margin-top:14px; border-top:1px solid var(--rule); padding-top:18px;">
+          Specialty coffee is the fastest-growing segment in the category, five years running.
+        </div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:16px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);">02 — Behavior</div>
+        <div class="serif" style="font-size: 150px; line-height:0.95; margin-top:18px; font-variation-settings:'opsz' 144;">3<span style="font-size:60px;">×</span></div>
+        <div class="body" style="margin-top:14px; border-top:1px solid var(--rule); padding-top:18px;">
+          Retention on premium food subscriptions has tripled since 2020.
+        </div>
+      </div>
+      <div>
+        <div class="mono" style="font-size:16px; letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);">03 — Values</div>
+        <div class="serif" style="font-size: 150px; line-height:0.95; margin-top:18px; font-variation-settings:'opsz' 144;">62<span style="font-size:60px;">%</span></div>
+        <div class="body" style="margin-top:14px; border-top:1px solid var(--rule); padding-top:18px;">
+          Of under-35 drinkers say origin matters when choosing a coffee brand.
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Why now · Three signals</span>
+      <span>P. 03</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 04 Introducing Marrow ============ -->
+  <section data-label="Introducing Marrow" class="slide ink" style="padding:0; position:relative;">
+    <div class="top-chrome">
+      <span>§ 03 — The company</span><span>04 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="position:absolute; inset:0; display:grid; grid-template-columns: 1.2fr 1fr;">
+      <div style="padding: 100px; display:flex; flex-direction:column; justify-content:center;">
+        <div class="mono" style="font-size:16px; letter-spacing:0.2em; text-transform:uppercase; color: rgba(243,238,229,0.55); margin-bottom: 48px;">Introducing</div>
+        <h1 class="title" style="font-size: 300px; color: var(--bone);">Marrow<span style="color:var(--accent);">.</span></h1>
+        <div class="lede" style="margin-top: 64px; max-width: 900px; color: rgba(243,238,229,0.85); font-size: 52px;">
+          Single-origin coffee from small farms, shipped within <em style="color: var(--accent); font-style: italic;">twelve weeks</em> of harvest.
+        </div>
+        <div class="mono" style="margin-top: 72px; color: rgba(243,238,229,0.55); font-size:18px; letter-spacing:0.12em; text-transform:uppercase;">
+          Farmer → Roaster → You &nbsp; &nbsp; Three steps. No blends. No middlemen.
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center; background: #120E0A; border-left: 1px solid rgba(243,238,229,0.08);">
+        <div class="ring" style="width: 520px; height: 520px; border-color: rgba(243,238,229,0.22);">
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Introducing · The one-liner</span>
+      <span>P. 04</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 05 How It Works ============ -->
+  <section data-label="How It Works" class="slide paper">
+    <div class="top-chrome">
+      <span>§ 04 — Mechanism</span><span>05 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 140px;">
+      <div class="eyebrow" style="margin-bottom: 28px;"><span class="dot"></span>How it works</div>
+      <h2 class="headline" style="font-size:88px;">Five steps. One loop. Fully traceable.</h2>
+    </div>
+    <div style="flex:1; display:flex; align-items:center; margin-top: 40px;">
+      <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap: 32px; width:100%;">
+        <!-- step -->
+        <div style="position:relative; padding-top: 48px;">
+          <div class="mono" style="position:absolute; top:0; left:0; font-size:16px; letter-spacing:0.2em; color:var(--accent); font-weight:500;">01</div>
+          <div style="border-top:1px solid var(--ink); padding-top:28px;">
+            <div class="serif" style="font-size: 44px; line-height:1.05;">Taste<br/>profile</div>
+            <div class="body" style="margin-top: 20px; font-size:22px;">A two-minute quiz maps your palate to flavor vectors.</div>
+          </div>
+        </div>
+        <div style="position:relative; padding-top: 48px;">
+          <div class="mono" style="position:absolute; top:0; left:0; font-size:16px; letter-spacing:0.2em; color:var(--accent); font-weight:500;">02</div>
+          <div style="border-top:1px solid var(--ink); padding-top:28px;">
+            <div class="serif" style="font-size: 44px; line-height:1.05;">Match to<br/>a farmer</div>
+            <div class="body" style="margin-top: 20px; font-size:22px;">Not a blend. A person, a farm, a lot, a harvest.</div>
+          </div>
+        </div>
+        <div style="position:relative; padding-top: 48px;">
+          <div class="mono" style="position:absolute; top:0; left:0; font-size:16px; letter-spacing:0.2em; color:var(--accent); font-weight:500;">03</div>
+          <div style="border-top:1px solid var(--ink); padding-top:28px;">
+            <div class="serif" style="font-size: 44px; line-height:1.05;">Roast to<br/>order</div>
+            <div class="body" style="margin-top: 20px; font-size:22px;">Within 72 hours of your order being placed.</div>
+          </div>
+        </div>
+        <div style="position:relative; padding-top: 48px;">
+          <div class="mono" style="position:absolute; top:0; left:0; font-size:16px; letter-spacing:0.2em; color:var(--accent); font-weight:500;">04</div>
+          <div style="border-top:1px solid var(--ink); padding-top:28px;">
+            <div class="serif" style="font-size: 44px; line-height:1.05;">Nitrogen<br/>ship</div>
+            <div class="body" style="margin-top: 20px; font-size:22px;">Compostable pouch, flushed to lock in aroma.</div>
+          </div>
+        </div>
+        <div style="position:relative; padding-top: 48px;">
+          <div class="mono" style="position:absolute; top:0; left:0; font-size:16px; letter-spacing:0.2em; color:var(--accent); font-weight:500;">05</div>
+          <div style="border-top:1px solid var(--ink); padding-top:28px;">
+            <div class="serif" style="font-size: 44px; line-height:1.05;">Scan &amp;<br/>trace</div>
+            <div class="body" style="margin-top: 20px; font-size:22px;">QR reveals farmer, lot, date, and price paid.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>How it works · End-to-end</span>
+      <span>P. 05</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 06 The Market ============ -->
+  <section data-label="The Market" class="slide">
+    <div class="top-chrome">
+      <span>§ 05 — Market</span><span>06 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 140px; display:grid; grid-template-columns: 1fr 1.1fr; gap: 90px; flex:1;">
+      <div style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="eyebrow" style="margin-bottom: 32px;"><span class="dot"></span>The market</div>
+        <h2 class="headline" style="font-size:80px;">A $14B category with an <em>$1.8B</em> wedge that's finally ready to switch.</h2>
+        <p class="body" style="margin-top: 40px; max-width: 620px;">
+          We model the market in three nested circles. Bottom-up figures filtered through 18 months of our own retention data.
+        </p>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center;">
+        <!-- SVG concentric TAM/SAM/SOM -->
+        <svg viewBox="0 0 620 620" width="620" height="620" style="overflow:visible;">
+          <circle cx="310" cy="310" r="300" fill="none" stroke="currentColor" stroke-width="1" opacity="0.28"/>
+          <circle cx="310" cy="310" r="200" fill="none" stroke="currentColor" stroke-width="1" opacity="0.45"/>
+          <circle cx="310" cy="310" r="100" fill="var(--accent)" opacity="0.92"/>
+          <!-- labels on lines -->
+          <line x1="310" y1="10" x2="310" y2="-20" stroke="var(--muted)" stroke-width="1" stroke-dasharray="2 4"/>
+          <text x="310" y="-40" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="16" letter-spacing="2" fill="currentColor">TAM · $14.0B</text>
+          <line x1="510" y1="310" x2="560" y2="310" stroke="var(--muted)" stroke-width="1" stroke-dasharray="2 4"/>
+          <text x="580" y="310" dominant-baseline="middle" font-family="JetBrains Mono, monospace" font-size="16" letter-spacing="2" fill="currentColor">SAM · $1.8B</text>
+          <text x="310" y="308" text-anchor="middle" font-family="Fraunces, serif" font-size="56" fill="var(--bone)" font-style="italic">$410M</text>
+          <text x="310" y="348" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="14" letter-spacing="3" fill="var(--bone)">SOM — 3YR</text>
+        </svg>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 40px; border-top: 1px solid var(--rule); padding-top: 32px;">
+      <div>
+        <div class="mono small" style="color:var(--muted); letter-spacing:0.14em; text-transform:uppercase;">TAM · US Specialty Coffee</div>
+        <div class="serif" style="font-size: 56px; line-height:1;">$14.0B <span class="small mono" style="color:var(--accent-2); font-size:22px; margin-left:10px;">+7% CAGR</span></div>
+      </div>
+      <div>
+        <div class="mono small" style="color:var(--muted); letter-spacing:0.14em; text-transform:uppercase;">SAM · DTC Premium Subscription</div>
+        <div class="serif" style="font-size: 56px; line-height:1;">$1.8B <span class="small mono" style="color:var(--accent-2); font-size:22px; margin-left:10px;">+18% CAGR</span></div>
+      </div>
+      <div>
+        <div class="mono small" style="color:var(--muted); letter-spacing:0.14em; text-transform:uppercase;">SOM · 3-yr reachable</div>
+        <div class="serif" style="font-size: 56px; line-height:1;">$410M <span class="small mono" style="color:var(--accent); font-size:22px; margin-left:10px;">Our target</span></div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Market · TAM / SAM / SOM</span>
+      <span>P. 06</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 07 Traction ============ -->
+  <section data-label="Traction" class="slide bone2">
+    <div class="top-chrome">
+      <span>§ 06 — Traction</span><span>07 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 120px; display:grid; grid-template-columns: 1.2fr 1fr; gap: 60px;">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 24px;"><span class="dot"></span>Traction · 18 months</div>
+        <h2 class="headline" style="font-size:68px;">The curves are <em>compounding</em>, not spiking.</h2>
+      </div>
+      <div class="body" style="align-self:flex-end; font-size: 22px; max-width: 640px; color:var(--ink-2);">
+        19% MoM growth in MRR across the last six months. NRR of 128%. Gross margin trending up as our second roaster comes online.
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div style="flex:1; margin-top: 40px; margin-bottom: 20px; display:grid; grid-template-columns: 2fr 1fr; gap: 40px; min-height: 0;">
+      <div style="border:1px solid var(--rule); background: var(--paper); padding: 24px 28px 20px; display:flex; flex-direction:column; min-height: 0;">
+        <div class="flex between" style="align-items:flex-start; margin-bottom: 10px;">
+          <div>
+            <div class="mono" style="font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color: var(--muted);">Fig. 01 — Monthly Recurring Revenue</div>
+            <div class="serif" style="font-size: 42px; line-height:1; margin-top:8px;">$412K <span class="mono" style="color:var(--accent-2); font-size:18px; letter-spacing:0.1em;">▲ +19% MoM</span></div>
+          </div>
+          <div class="mono" style="font-size:14px; letter-spacing:0.14em; color: var(--muted);">OCT '24 → MAR '26</div>
+        </div>
+        <svg viewBox="0 0 760 260" preserveAspectRatio="none" style="flex:1; width:100%; min-height:0;">
+          <g stroke="var(--rule)" stroke-width="1">
+            <line x1="0" y1="60" x2="760" y2="60"/>
+            <line x1="0" y1="130" x2="760" y2="130"/>
+            <line x1="0" y1="200" x2="760" y2="200"/>
+          </g>
+          <path d="M0,240 L40,238 L80,235 L120,232 L160,226 L200,219 L240,210 L280,198 L320,185 L360,170 L400,153 L440,134 L480,112 L520,90 L560,68 L600,50 L640,38 L680,28 L720,20 L760,14 L760,260 L0,260 Z"
+                fill="var(--accent)" opacity="0.12"/>
+          <path d="M0,240 L40,238 L80,235 L120,232 L160,226 L200,219 L240,210 L280,198 L320,185 L360,170 L400,153 L440,134 L480,112 L520,90 L560,68 L600,50 L640,38 L680,28 L720,20 L760,14"
+                fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+          <circle cx="760" cy="14" r="5" fill="var(--accent)"/>
+        </svg>
+        <div class="flex between mono" style="margin-top:8px; font-size: 14px; letter-spacing:0.1em; color:var(--muted);">
+          <span>Oct '24</span><span>Jan '25</span><span>Apr '25</span><span>Jul '25</span><span>Oct '25</span><span>Jan '26</span><span>Mar '26</span>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-rows: repeat(3, 1fr); gap: 20px; min-height: 0;">
+        <div style="border:1px solid var(--rule); background: var(--paper); padding: 20px 24px; display:flex; flex-direction:column; justify-content:center;">
+          <div class="mono" style="font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color: var(--muted);">Subscribers</div>
+          <div class="serif" style="font-size: 52px; line-height:1; margin-top:6px;">8,412</div>
+          <div style="margin-top:4px; font-size: 18px; color: var(--muted);">Paying members. +44% QoQ.</div>
+        </div>
+        <div style="border:1px solid var(--rule); background: var(--paper); padding: 20px 24px; display:flex; flex-direction:column; justify-content:center;">
+          <div class="mono" style="font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color: var(--muted);">Net Revenue Retention</div>
+          <div class="serif" style="font-size: 52px; line-height:1; margin-top:6px;">128%</div>
+          <div style="margin-top:4px; font-size: 18px; color: var(--muted);">Trailing twelve months.</div>
+        </div>
+        <div style="border:1px solid var(--rule); background: var(--paper); padding: 20px 24px; display:flex; flex-direction:column; justify-content:center;">
+          <div class="mono" style="font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color: var(--muted);">Gross Margin</div>
+          <div class="serif" style="font-size: 52px; line-height:1; margin-top:6px;">61%</div>
+          <div style="margin-top:4px; font-size: 18px; color: var(--muted);">Up from 47% at launch.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Traction · 18-month view</span>
+      <span>P. 07</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 08 Unit Economics ============ -->
+  <section data-label="Unit Economics" class="slide">
+    <div class="top-chrome">
+      <span>§ 07 — Unit economics</span><span>08 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 120px; max-width: 1300px;">
+      <div class="eyebrow" style="margin-bottom: 24px;"><span class="dot"></span>Unit economics</div>
+      <h2 class="headline" style="font-size:64px;">Pay back in month two. <em>9× LTV:CAC</em>. And 22¢ of every dollar goes to the grower.</h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1.1fr 1fr; gap: 60px; margin-top: 40px; margin-bottom: 20px; flex:1; min-height: 0;">
+      <!-- LTV / CAC grid -->
+      <div>
+        <table style="width:100%; border-collapse: collapse; font-size: 22px;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding: 14px 0; border-bottom:1px solid var(--ink); font-family:'JetBrains Mono',monospace; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); font-weight:500;">Metric</th>
+              <th style="text-align:right; padding: 14px 0; border-bottom:1px solid var(--ink); font-family:'JetBrains Mono',monospace; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); font-weight:500;">Marrow</th>
+              <th style="text-align:right; padding: 14px 0; border-bottom:1px solid var(--ink); font-family:'JetBrains Mono',monospace; font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); font-weight:500;">Industry</th>
+            </tr>
+          </thead>
+          <tbody class="serif" style="font-size: 26px;">
+            <tr><td style="padding: 16px 0; border-bottom:1px solid var(--rule);">Blended CAC</td><td style="text-align:right;">$32</td><td style="text-align:right; color:var(--muted);">$58</td></tr>
+            <tr><td style="padding: 16px 0; border-bottom:1px solid var(--rule);">Avg. subscription length</td><td style="text-align:right;">14.2 mo</td><td style="text-align:right; color:var(--muted);">6.8 mo</td></tr>
+            <tr><td style="padding: 16px 0; border-bottom:1px solid var(--rule);">Lifetime value</td><td style="text-align:right;">$291</td><td style="text-align:right; color:var(--muted);">$112</td></tr>
+            <tr><td style="padding: 16px 0; border-bottom:1px solid var(--rule);">Payback period</td><td style="text-align:right;">1.8 mo</td><td style="text-align:right; color:var(--muted);">9.4 mo</td></tr>
+            <tr><td style="padding: 16px 0; font-weight:500; color:var(--accent);">LTV : CAC</td><td style="text-align:right; color:var(--accent); font-weight:500;">9.1×</td><td style="text-align:right; color:var(--muted);">1.9×</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- where does $1 go -->
+      <div style="align-self:center;">
+        <div class="mono" style="font-size:14px; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom: 20px;">Where each $1 of revenue goes</div>
+        <div style="display:flex; flex-direction:column; gap: 12px;">
+          <div>
+            <div class="flex between" style="margin-bottom: 6px;"><span style="font-size: 22px; color:var(--ink);">To the farmer</span><span class="serif" style="font-size: 26px;">22¢</span></div>
+            <div style="height:10px; background: var(--bone-2); border-radius: 2px;"><div style="width:22%; height:100%; background: var(--accent); border-radius: 2px;"></div></div>
+          </div>
+          <div>
+            <div class="flex between" style="margin-bottom: 6px;"><span style="font-size: 22px; color:var(--ink);">Roasting &amp; packaging</span><span class="serif" style="font-size: 26px;">17¢</span></div>
+            <div style="height:10px; background: var(--bone-2); border-radius: 2px;"><div style="width:17%; height:100%; background: var(--accent-2); border-radius: 2px;"></div></div>
+          </div>
+          <div>
+            <div class="flex between" style="margin-bottom: 6px;"><span style="font-size: 22px; color:var(--ink);">Shipping &amp; fulfillment</span><span class="serif" style="font-size: 26px;">13¢</span></div>
+            <div style="height:10px; background: var(--bone-2); border-radius: 2px;"><div style="width:13%; height:100%; background: var(--swatch); border-radius: 2px;"></div></div>
+          </div>
+          <div>
+            <div class="flex between" style="margin-bottom: 6px;"><span style="font-size: 22px; color:var(--ink);">Acquisition</span><span class="serif" style="font-size: 26px;">11¢</span></div>
+            <div style="height:10px; background: var(--bone-2); border-radius: 2px;"><div style="width:11%; height:100%; background: #8A7A62; border-radius: 2px;"></div></div>
+          </div>
+          <div>
+            <div class="flex between" style="margin-bottom: 6px;"><span style="font-size: 22px; color:var(--ink);">Overhead</span><span class="serif" style="font-size: 26px;">9¢</span></div>
+            <div style="height:10px; background: var(--bone-2); border-radius: 2px;"><div style="width:9%; height:100%; background: var(--muted); border-radius: 2px;"></div></div>
+          </div>
+          <div>
+            <div class="flex between" style="margin-bottom: 6px;"><span style="font-size: 22px; color:var(--ink); font-weight:500;">Net margin</span><span class="serif" style="font-size: 26px; color:var(--accent);">28¢</span></div>
+            <div style="height:10px; background: var(--bone-2); border-radius: 2px;"><div style="width:28%; height:100%; background: var(--ink); border-radius: 2px;"></div></div>
+          </div>
+        </div>
+        <div style="margin-top: 20px; font-style: italic; font-family: 'Fraunces', serif; font-size: 20px; color:var(--muted);">
+          6× the farmer share of a typical specialty brand.
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Unit economics · per member</span>
+      <span>P. 08</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 09 Competitive Landscape ============ -->
+  <section data-label="Competitive Landscape" class="slide paper">
+    <div class="top-chrome">
+      <span>§ 08 — Competition</span><span>09 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 140px;">
+      <div class="eyebrow" style="margin-bottom: 28px;"><span class="dot"></span>Competitive landscape</div>
+      <h2 class="headline" style="font-size:80px; max-width: 1400px;">We sit in the corner that's hardest to reach: <em>premium</em> and <em>transparent</em>.</h2>
+    </div>
+
+    <div style="flex:1; display:grid; grid-template-columns: 1.6fr 1fr; gap: 80px; margin-top: 48px;">
+      <!-- 2x2 -->
+      <div style="position:relative;">
+        <div style="position:absolute; inset: 0;">
+          <!-- axes -->
+          <div style="position:absolute; left:0; right:0; top:50%; height:1px; background: var(--ink);"></div>
+          <div style="position:absolute; top:0; bottom:0; left:50%; width:1px; background: var(--ink);"></div>
+          <!-- labels -->
+          <div class="mono small" style="position:absolute; left:50%; top:-28px; transform: translateX(-50%); letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);">High Traceability ↑</div>
+          <div class="mono small" style="position:absolute; left:50%; bottom:-28px; transform: translateX(-50%); letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);">↓ Opaque</div>
+          <div class="mono small" style="position:absolute; left:-8px; top:50%; transform: rotate(-90deg) translateX(-50%); transform-origin: left center; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);">← Mass priced</div>
+          <div class="mono small" style="position:absolute; right:-8px; top:50%; transform: rotate(90deg) translateY(-50%); transform-origin: right center; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted);">Premium →</div>
+
+          <!-- plots -->
+          <!-- grocery: bottom-left -->
+          <div style="position:absolute; left:18%; top:72%;">
+            <div style="width:14px; height:14px; border-radius:99px; background: var(--muted);"></div>
+            <div class="body" style="font-size:22px; margin-top:8px; font-weight:500;">Grocery roasters</div>
+            <div class="small" style="font-size:18px;">Cheap. Months old. Blended.</div>
+          </div>
+          <!-- DTC subs: bottom-right -->
+          <div style="position:absolute; left:62%; top:64%;">
+            <div style="width:14px; height:14px; border-radius:99px; background: var(--muted);"></div>
+            <div class="body" style="font-size:22px; margin-top:8px; font-weight:500;">DTC incumbents</div>
+            <div class="small" style="font-size:18px;">Convenient. Blend-first.</div>
+          </div>
+          <!-- specialty: top-left -->
+          <div style="position:absolute; left:12%; top:22%;">
+            <div style="width:14px; height:14px; border-radius:99px; background: var(--muted);"></div>
+            <div class="body" style="font-size:22px; margin-top:8px; font-weight:500;">Local specialty</div>
+            <div class="small" style="font-size:18px;">Great coffee. Regional only.</div>
+          </div>
+          <!-- marrow: top-right -->
+          <div style="position:absolute; left:68%; top:14%;">
+            <div style="width:22px; height:22px; border-radius:99px; background: var(--accent); box-shadow: 0 0 0 6px rgba(177,74,44,0.15);"></div>
+            <div class="serif" style="font-size:32px; margin-top:10px; font-style: italic; color: var(--accent);">Marrow.</div>
+            <div class="body" style="font-size:22px; margin-top:2px;">Premium. Transparent. Direct.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Why this corner is defensible -->
+      <div style="display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--rule); padding-left: 60px;">
+        <div class="mono small" style="letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); margin-bottom: 22px;">Why this corner is defensible</div>
+        <div style="display:flex; flex-direction:column; gap: 28px;">
+          <div>
+            <div class="serif" style="font-size: 32px; font-style: italic;">Direct supply agreements.</div>
+            <div class="body" style="font-size: 22px; margin-top:6px;">Two-year offtake commitments with 14 named farms.</div>
+          </div>
+          <div>
+            <div class="serif" style="font-size: 32px; font-style: italic;">Vertical roasting.</div>
+            <div class="body" style="font-size: 22px; margin-top:6px;">We roast, pack, and ship. No third-party co-packer.</div>
+          </div>
+          <div>
+            <div class="serif" style="font-size: 32px; font-style: italic;">Lot-level traceability.</div>
+            <div class="body" style="font-size: 22px; margin-top:6px;">Every bag, every QR, every time. Infrastructure, not a sticker.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Competition · 2×2 &amp; moat</span>
+      <span>P. 09</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 10 Roadmap ============ -->
+  <section data-label="Roadmap" class="slide">
+    <div class="top-chrome">
+      <span>§ 09 — Roadmap</span><span>10 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 140px;">
+      <div class="eyebrow" style="margin-bottom: 28px;"><span class="dot"></span>Roadmap · Three horizons</div>
+      <h2 class="headline" style="font-size:80px; max-width: 1500px;">Deepen, broaden, then open the <em>platform</em>.</h2>
+    </div>
+
+    <div style="flex:1; margin-top: 80px; position:relative;">
+      <!-- timeline axis -->
+      <div style="position:absolute; left:0; right:0; top: 90px; height: 1px; background: var(--ink);"></div>
+
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 60px; position:relative;">
+        <div>
+          <div class="mono small" style="letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);">H1 · 2026</div>
+          <div class="serif" style="font-size: 60px; line-height:1; margin-top: 8px;">Deepen<span style="color:var(--accent);">.</span></div>
+          <div style="width:18px; height:18px; border-radius:99px; background: var(--accent); margin-top: 24px; position:relative; z-index:1;"></div>
+          <div style="margin-top: 32px; border-top:1px solid var(--rule); padding-top: 22px;" class="body">
+            <div style="font-weight:500; margin-bottom:10px;">Membership depth</div>
+            <div>→ 8 new origin countries</div>
+            <div>→ Taste-graph v2 matching</div>
+            <div>→ Farm-tied loyalty rewards</div>
+          </div>
+        </div>
+        <div>
+          <div class="mono small" style="letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);">2027</div>
+          <div class="serif" style="font-size: 60px; line-height:1; margin-top: 8px;">Broaden<span style="color:var(--accent);">.</span></div>
+          <div style="width:18px; height:18px; border-radius:99px; background: var(--accent-2); margin-top: 24px; position:relative; z-index:1;"></div>
+          <div style="margin-top: 32px; border-top:1px solid var(--rule); padding-top: 22px;" class="body">
+            <div style="font-weight:500; margin-bottom:10px;">Adjacent formats</div>
+            <div>→ Cold brew concentrate</div>
+            <div>→ Ready-to-drink line</div>
+            <div>→ Gifting as standalone business</div>
+          </div>
+        </div>
+        <div>
+          <div class="mono small" style="letter-spacing:0.16em; text-transform:uppercase; color:var(--muted);">2028 →</div>
+          <div class="serif" style="font-size: 60px; line-height:1; margin-top: 8px;">Open<span style="color:var(--accent);">.</span></div>
+          <div style="width:18px; height:18px; border-radius:99px; background: var(--ink); margin-top: 24px; position:relative; z-index:1;"></div>
+          <div style="margin-top: 32px; border-top:1px solid var(--rule); padding-top: 22px;" class="body">
+            <div style="font-weight:500; margin-bottom:10px;">Platform for roasters</div>
+            <div>→ Sourcing &amp; logistics API</div>
+            <div>→ White-label traceability</div>
+            <div>→ Marketplace to end-consumers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Roadmap · Three horizons</span>
+      <span>P. 10</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 11 Team ============ -->
+  <section data-label="Team" class="slide bone2">
+    <div class="top-chrome">
+      <span>§ 10 — Team</span><span>11 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="margin-top: 120px;">
+      <div class="eyebrow" style="margin-bottom: 24px;"><span class="dot"></span>The team</div>
+      <h2 class="headline" style="font-size:64px; max-width: 1500px;">Four founders. <em>Fifteen years</em> of coffee between us.</h2>
+    </div>
+
+    <div style="flex:1; margin-top: 40px; margin-bottom: 20px; display:grid; grid-template-columns: repeat(4, 1fr); gap: 36px; min-height: 0;">
+      <div style="display:flex; flex-direction:column; min-height: 0;">
+        <div class="photo" style="aspect-ratio: 1/1;"><div class="caption"><span class="k">PORTRAIT —</span> ANA</div></div>
+        <div style="margin-top: 16px;">
+          <div class="serif" style="font-size: 30px; line-height:1.05;">Ana Restrepo</div>
+          <div class="mono" style="font-size:14px; letter-spacing:0.12em; text-transform:uppercase; margin-top:4px; color:var(--accent);">Co-founder · Sourcing</div>
+          <div style="font-size:18px; line-height:1.4; margin-top: 10px; color:var(--ink-2);">Head of origin at a top-25 US specialty roaster. Built our farmer network.</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; min-height: 0;">
+        <div class="photo" style="aspect-ratio: 1/1;"><div class="caption"><span class="k">PORTRAIT —</span> MATEO</div></div>
+        <div style="margin-top: 16px;">
+          <div class="serif" style="font-size: 30px; line-height:1.05;">Mateo Silva</div>
+          <div class="mono" style="font-size:14px; letter-spacing:0.12em; text-transform:uppercase; margin-top:4px; color:var(--accent);">Co-founder · Growth</div>
+          <div style="font-size:18px; line-height:1.4; margin-top: 10px; color:var(--ink-2);">Scaled a DTC food brand from zero to $40M. Runs growth and brand.</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; min-height: 0;">
+        <div class="photo" style="aspect-ratio: 1/1;"><div class="caption"><span class="k">PORTRAIT —</span> PRIYA</div></div>
+        <div style="margin-top: 16px;">
+          <div class="serif" style="font-size: 30px; line-height:1.05;">Priya Rao</div>
+          <div class="mono" style="font-size:14px; letter-spacing:0.12em; text-transform:uppercase; margin-top:4px; color:var(--accent);">Co-founder · Ops</div>
+          <div style="font-size:18px; line-height:1.4; margin-top: 10px; color:var(--ink-2);">Built the systems behind a national cold-chain network.</div>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; min-height: 0;">
+        <div class="photo" style="aspect-ratio: 1/1;"><div class="caption"><span class="k">PORTRAIT —</span> KOJI</div></div>
+        <div style="margin-top: 16px;">
+          <div class="serif" style="font-size: 30px; line-height:1.05;">Koji Park</div>
+          <div class="mono" style="font-size:14px; letter-spacing:0.12em; text-transform:uppercase; margin-top:4px; color:var(--accent);">Co-founder · Product / CEO</div>
+          <div style="font-size:18px; line-height:1.4; margin-top: 10px; color:var(--ink-2);">Product lead at two consumer startups. Owns the member experience.</div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>Team · Four founders</span>
+      <span>P. 11</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+  <!-- ============ 12 The Ask ============ -->
+  <section data-label="The Ask" class="slide ink" style="padding: 0;">
+    <div class="top-chrome">
+      <span>§ 11 — The ask</span><span>12 / 12</span>
+      <div class="rule"></div>
+    </div>
+    <div style="position:absolute; inset:0; display:grid; grid-template-columns: 1fr 1fr;">
+      <div style="padding: 160px 100px 100px; display:flex; flex-direction:column; justify-content:center;">
+        <div class="mono" style="font-size:16px; letter-spacing:0.2em; text-transform:uppercase; color: rgba(243,238,229,0.55); margin-bottom: 36px;">The ask</div>
+        <div class="serif" style="font-size: 280px; line-height:0.9; font-variation-settings:'opsz' 144; color: var(--bone);">$6M<span style="color: var(--accent);">.</span></div>
+        <div class="lede" style="margin-top: 40px; color: rgba(243,238,229,0.85); max-width: 700px;">
+          Series A. 18 months of runway. Led by <em style="color:var(--accent);">one committed partner</em>; $2.4M remaining.
+        </div>
+        <div class="mono" style="margin-top: 56px; color: rgba(243,238,229,0.6); font-size:18px; letter-spacing:0.14em; text-transform:uppercase;">
+          Close target — Q3 2026 &nbsp;·&nbsp; koji@marrow.coffee
+        </div>
+      </div>
+
+      <div style="padding: 160px 100px 100px; background: #120E0A; border-left: 1px solid rgba(243,238,229,0.1); display:flex; flex-direction:column; justify-content:center;">
+        <div class="mono" style="font-size:16px; letter-spacing:0.2em; text-transform:uppercase; color: rgba(243,238,229,0.55); margin-bottom: 40px;">Use of funds</div>
+
+        <div style="display:flex; flex-direction:column; gap: 32px;">
+          <div>
+            <div class="flex between" style="align-items:flex-end; margin-bottom: 12px;">
+              <span class="serif" style="font-size: 40px; color: var(--bone);">Growth</span>
+              <span class="serif" style="font-size: 40px; color: var(--accent);">40%</span>
+            </div>
+            <div style="height: 4px; background: rgba(243,238,229,0.1);"><div style="width:40%; height:100%; background: var(--accent);"></div></div>
+            <div class="small" style="margin-top: 10px; color: rgba(243,238,229,0.65);">Paid acquisition, brand, strategic partnerships.</div>
+          </div>
+          <div>
+            <div class="flex between" style="align-items:flex-end; margin-bottom: 12px;">
+              <span class="serif" style="font-size: 40px; color: var(--bone);">Operations</span>
+              <span class="serif" style="font-size: 40px; color: var(--accent-2);">35%</span>
+            </div>
+            <div style="height: 4px; background: rgba(243,238,229,0.1);"><div style="width:35%; height:100%; background: var(--accent-2);"></div></div>
+            <div class="small" style="margin-top: 10px; color: rgba(243,238,229,0.65);">East-coast roasting facility. –2 days shipping.</div>
+          </div>
+          <div>
+            <div class="flex between" style="align-items:flex-end; margin-bottom: 12px;">
+              <span class="serif" style="font-size: 40px; color: var(--bone);">Origin</span>
+              <span class="serif" style="font-size: 40px; color: var(--swatch);">15%</span>
+            </div>
+            <div style="height: 4px; background: rgba(243,238,229,0.1);"><div style="width:15%; height:100%; background: var(--swatch);"></div></div>
+            <div class="small" style="margin-top: 10px; color: rgba(243,238,229,0.65);">Deeper contracts. Better prices. New relationships.</div>
+          </div>
+          <div>
+            <div class="flex between" style="align-items:flex-end; margin-bottom: 12px;">
+              <span class="serif" style="font-size: 40px; color: var(--bone);">Reserve</span>
+              <span class="serif" style="font-size: 40px; color: rgba(243,238,229,0.6);">10%</span>
+            </div>
+            <div style="height: 4px; background: rgba(243,238,229,0.1);"><div style="width:10%; height:100%; background: rgba(243,238,229,0.4);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page-chrome">
+      <span class="wordmark"><span class="mark"></span>MARROW</span>
+      <span>The ask · Series A</span>
+      <span>P. 12</span>
+      <div class="rule"></div>
+    </div>
+  </section>
+
+</deck-stage>
+
+<!-- Tweaks panel -->
+<div id="tweak-panel" aria-hidden="true">
+  <h4>Theme</h4>
+  <div class="seg" role="group" aria-label="Theme">
+    <button data-theme-btn="light" aria-pressed="true">Light</button>
+    <button data-theme-btn="dark" aria-pressed="false">Dark</button>
+  </div>
+</div>
+
+<script src="deck-stage.js"></script>
+<script>
+  // ---- Tweaks ----
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "theme": "light"
+  }/*EDITMODE-END*/;
+
+  const tweakState = { ...TWEAK_DEFAULTS };
+  const panel = document.getElementById('tweak-panel');
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    panel.querySelectorAll('[data-theme-btn]').forEach(b => {
+      b.setAttribute('aria-pressed', b.dataset.themeBtn === t ? 'true' : 'false');
+    });
+  }
+  applyTheme(tweakState.theme);
+
+  panel.querySelectorAll('[data-theme-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tweakState.theme = btn.dataset.themeBtn;
+      applyTheme(tweakState.theme);
+      try {
+        window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { theme: tweakState.theme } }, '*');
+      } catch (e) {}
+    });
+  });
+
+  // Edit-mode protocol
+  window.addEventListener('message', (ev) => {
+    const d = ev.data || {};
+    if (d.type === '__activate_edit_mode') panel.setAttribute('data-visible', '');
+    else if (d.type === '__deactivate_edit_mode') panel.removeAttribute('data-visible');
+  });
+  try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch (e) {}
+</script>
+</body>
+</html>
