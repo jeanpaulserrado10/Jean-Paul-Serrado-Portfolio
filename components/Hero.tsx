@@ -165,12 +165,11 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Quick facts grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] border-y border-white/[0.06]">
+        <div className="grid grid-cols-3 gap-px bg-white/[0.06] border-y border-white/[0.06]">
           {[
             { label: 'Years in B2B Media', value: '3+' },
             { label: 'Content Output Scale', value: '300%' },
             { label: 'Languages', value: 'EN / ES' },
-            { label: 'Remote', value: 'Worldwide' },
           ].map((fact, idx) => (
             <div key={idx} className="bg-brand-black px-6 py-6">
               <p className="text-2xl md:text-3xl font-extrabold text-ink-100 tabular-nums tracking-tight mb-1">
