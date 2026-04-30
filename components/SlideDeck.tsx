@@ -115,16 +115,29 @@ export const SlideDeck: React.FC<SlideDeckProps> = ({ slides }) => {
             </div>
           </div>
 
-          {/* Section indicator */}
+          {/* Section indicator — clearly a navigator menu button */}
           <button
             onClick={() => setShowIndex(true)}
-            className="group flex items-center gap-3 px-4 py-1.5 rounded-full hover:bg-white/[0.04] transition-colors"
+            className="group flex items-center gap-3 pl-3 pr-2 h-9 rounded-full border border-white/[0.1] bg-white/[0.03] hover:bg-brand-lime hover:border-brand-lime hover:text-brand-black transition-all"
+            title="Browse all sections"
           >
-            <span className="text-ink-500 text-[10px] font-mono tracking-widest">
-              {String(currentIndex + 1).padStart(2, '0')} <span className="opacity-50">/</span> {String(slides.length).padStart(2, '0')}
+            <span className="text-[10px] font-mono tracking-widest text-ink-500 group-hover:text-brand-black/70 transition-colors">
+              {String(currentIndex + 1).padStart(2, '0')}<span className="opacity-50 mx-0.5">/</span>{String(slides.length).padStart(2, '0')}
             </span>
-            <span className="text-ink-100 text-sm font-medium">{current.name}</span>
-            <Icons.Grid className="w-3 h-3 text-ink-500 group-hover:text-ink-200 transition-colors" />
+            <span className="text-ink-100 group-hover:text-brand-black text-sm font-semibold transition-colors">
+              {current.name}
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1 pl-2 ml-1 border-l border-white/[0.1] group-hover:border-brand-black/20 text-[9px] font-mono uppercase tracking-widest text-ink-400 group-hover:text-brand-black/70 transition-colors">
+              All sections
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="transition-transform group-hover:rotate-180">
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            <span className="sm:hidden inline-flex w-5 h-5 items-center justify-center rounded-full bg-white/[0.04] group-hover:bg-brand-black/10 transition-colors">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
           </button>
 
           {/* Right controls */}

@@ -14,20 +14,21 @@ interface ShortcutTarget {
   index: number;        // zero-based slide index
   display: string;      // visible position label (e.g. "02")
   label: string;
+  hint?: string;        // optional small subtitle for clarity
   icon: React.FC<{ className?: string }>;
 }
 
 const shortcuts: ShortcutTarget[] = [
-  { index: 1,  display: '02', label: 'Impact',           icon: Icons.BarChart },
-  { index: 2,  display: '03', label: 'Services',         icon: Icons.Zap },
-  { index: 3,  display: '04', label: 'Live Decks',       icon: Icons.PlaySquare },
-  { index: 4,  display: '05', label: 'Video Production', icon: Icons.Video },
-  { index: 5,  display: '06', label: 'Short-Form Clips', icon: Icons.Film },
-  { index: 6,  display: '07', label: 'PDF Carousels',    icon: Icons.FileText },
-  { index: 7,  display: '08', label: 'Campaigns',        icon: Icons.Sparkles },
-  { index: 8,  display: '09', label: 'Experience',       icon: Icons.TrendingUp },
-  { index: 9,  display: '10', label: 'Tech Stack',       icon: Icons.Cpu },
-  { index: 10, display: '11', label: 'Contact',          icon: Icons.Mail },
+  { index: 1,  display: '02', label: 'Impact',           icon: Icons.BarChart,   hint: 'Numbers & track record' },
+  { index: 2,  display: '03', label: 'Services',         icon: Icons.Zap,        hint: '5 capabilities' },
+  { index: 3,  display: '04', label: 'Live Decks',       icon: Icons.PlaySquare, hint: 'Interactive deck samples' },
+  { index: 4,  display: '05', label: 'Video Production', icon: Icons.Video,      hint: 'Brand, learning & shorts' },
+  { index: 5,  display: '06', label: 'Short-Form Clips', icon: Icons.Film,       hint: 'Cuts from interviews & events' },
+  { index: 6,  display: '07', label: 'PDF Carousels',    icon: Icons.FileText,   hint: 'LinkedIn & Instagram' },
+  { index: 7,  display: '08', label: 'Campaigns',        icon: Icons.Sparkles,   hint: 'Featured generative work' },
+  { index: 8,  display: '09', label: 'Experience',       icon: Icons.TrendingUp, hint: 'Roles & case studies' },
+  { index: 9,  display: '10', label: 'Tech Stack',       icon: Icons.Cpu,        hint: '20+ tools across 4 disciplines' },
+  { index: 10, display: '11', label: 'Contact',          icon: Icons.Mail,       hint: "Let's work together" },
 ];
 
 const jumpToSlide = (index: number) => {
@@ -118,21 +119,28 @@ export const Hero: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
             {shortcuts.map((s) => {
               const Icon = s.icon;
               return (
                 <button
                   key={s.label}
                   onClick={() => jumpToSlide(s.index)}
-                  className="group relative flex items-center gap-3 px-4 py-3.5 rounded-lg border border-white/[0.08] bg-white/[0.02] hover:bg-brand-lime hover:border-brand-lime hover:text-brand-black text-ink-200 transition-all duration-200"
+                  className="group relative flex flex-col gap-1 px-4 py-3.5 rounded-lg border border-white/[0.08] bg-white/[0.02] hover:bg-brand-lime hover:border-brand-lime hover:text-brand-black text-ink-200 transition-all duration-200 text-left"
                   aria-label={`Jump to ${s.label}`}
                 >
-                  <Icon className="w-4 h-4 text-ink-400 group-hover:text-brand-black shrink-0 transition-colors" />
-                  <span className="text-sm font-medium flex-1 text-left truncate">{s.label}</span>
-                  <span className="font-mono text-[10px] tabular-nums text-ink-500 group-hover:text-brand-black/60 shrink-0 transition-colors">
-                    {s.display}
-                  </span>
+                  <div className="flex items-center gap-2.5">
+                    <Icon className="w-4 h-4 text-ink-400 group-hover:text-brand-black shrink-0 transition-colors" />
+                    <span className="text-sm font-medium flex-1 truncate">{s.label}</span>
+                    <span className="font-mono text-[10px] tabular-nums text-ink-500 group-hover:text-brand-black/60 shrink-0 transition-colors">
+                      {s.display}
+                    </span>
+                  </div>
+                  {s.hint && (
+                    <span className="text-[10px] text-ink-500 group-hover:text-brand-black/70 leading-snug transition-colors pl-6">
+                      {s.hint}
+                    </span>
+                  )}
                 </button>
               );
             })}

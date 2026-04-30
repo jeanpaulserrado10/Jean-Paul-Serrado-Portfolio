@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import { Icons } from './Icons';
 
+type VideoSource = 'drive' | 'youtube';
+
+interface ActiveVideo {
+  id: string;
+  source: VideoSource;
+  externalUrl?: string;
+}
+
 interface SocialPost {
   id: string;
   author: string;
@@ -13,6 +21,14 @@ interface SocialPost {
   driveId: string;
   image: string;
   platform: 'X' | 'LinkedIn';
+}
+
+interface YouTubeShort {
+  id: string;       // YouTube video id
+  title: string;
+  views: string;
+  viewsNum: number;
+  url: string;
 }
 
 const posts: SocialPost[] = [
@@ -174,32 +190,56 @@ const posts: SocialPost[] = [
   }
 ];
 
+const youtubeShorts: YouTubeShort[] = [
+  {
+    id: 'CfTtxTa1u7k',
+    title: 'Neura Robotics CEO: 100M Labor Gap Will Force Robot Adoption',
+    views: '1,316', viewsNum: 1316,
+    url: 'https://youtube.com/shorts/CfTtxTa1u7k',
+  },
+  {
+    id: 'MQME-nR0-_8',
+    title: "Elon Musk's Timeline for AI Superintelligence",
+    views: '1,418', viewsNum: 1418,
+    url: 'https://youtube.com/shorts/MQME-nR0-_8',
+  },
+  {
+    id: 'guR6L24afL4',
+    title: 'Unpacking the 5 Layers of AI From Hardware to Models',
+    views: '1,113', viewsNum: 1113,
+    url: 'https://youtube.com/shorts/guR6L24afL4',
+  },
+  {
+    id: 'Yf0UZv4tQwc',
+    title: 'Why LLM Context Beats Model Choice in Factories',
+    views: '1,000', viewsNum: 1000,
+    url: 'https://youtube.com/shorts/Yf0UZv4tQwc',
+  },
+];
+
 type Filter = 'All' | 'X' | 'LinkedIn';
 
-const platformColors: Record<Filter, string> = {
-  All: 'text-white border-white/20 bg-white/5',
-  X: 'text-white border-white/20 bg-white/5',
-  LinkedIn: 'text-[#0A66C2] border-[#0A66C2]/30 bg-[#0A66C2]/5',
-};
-
 export const SocialPosts: React.FC = () => {
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [activeVideo, setActiveVideo] = useState<ActiveVideo | null>(null);
   const [filter, setFilter] = useState<Filter>('All');
 
   const filtered = filter === 'All' ? posts : posts.filter(p => p.platform === filter);
   const hero = filtered[0];
   const rest = filtered.slice(1);
 
-  const totalViews = posts.reduce((acc, p) => {
-    const n = p.viewsNum;
-    return acc + n;
-  }, 0);
+  const totalViews =
+    posts.reduce((acc, p) => acc + p.viewsNum, 0) +
+    youtubeShorts.reduce((acc, y) => acc + y.viewsNum, 0);
 
   const formatViews = (n: number) => {
     if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`;
     if (n >= 1000) return `${(n / 1000).toFixed(0)}K`;
     return n.toString();
   };
+
+  const playDrive = (id: string) => setActiveVideo({ id, source: 'drive' });
+  const playYoutube = (id: string, externalUrl: string) =>
+    setActiveVideo({ id, source: 'youtube', externalUrl });
 
   return (
     <section className="bg-brand-black text-ink-100 min-h-full px-6 md:px-12 py-16 md:py-24">
@@ -218,21 +258,25 @@ export const SocialPosts: React.FC = () => {
               <span className="font-serif italic font-normal text-brand-lime">that performed.</span>
             </h2>
             <p className="text-ink-400 text-lg leading-relaxed max-w-md mb-4">
-              Short-form videos cut from interviews, events, keynotes, and testimonials — repurposed into snackable social posts that drove real views and engagement on X and LinkedIn.
+              Short-form videos cut from interviews, events, keynotes, and testimonials — repurposed into snackable social posts that drove real views and engagement on X, LinkedIn, and YouTube Shorts.
             </p>
             <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500">
               Long-form source → short-form social
             </p>
           </div>
           <div className="lg:col-span-7 self-end">
-            <div className="grid grid-cols-2 gap-px bg-white/[0.06] border-y border-white/[0.06]">
+            <div className="grid grid-cols-3 gap-px bg-white/[0.06] border-y border-white/[0.06]">
               <div className="bg-brand-black p-5">
                 <p className="text-3xl md:text-4xl font-extrabold tabular-nums text-ink-100 mb-1">{formatViews(totalViews)}+</p>
                 <p className="text-[10px] font-mono uppercase tracking-widest text-ink-500">Total Views</p>
               </div>
               <div className="bg-brand-black p-5">
                 <p className="text-3xl md:text-4xl font-extrabold tabular-nums text-ink-100 mb-1">{posts.length}</p>
-                <p className="text-[10px] font-mono uppercase tracking-widest text-ink-500">Posts Shown</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-ink-500">X / LinkedIn</p>
+              </div>
+              <div className="bg-brand-black p-5">
+                <p className="text-3xl md:text-4xl font-extrabold tabular-nums text-ink-100 mb-1">{youtubeShorts.length}</p>
+                <p className="text-[10px] font-mono uppercase tracking-widest text-ink-500">YouTube Shorts</p>
               </div>
             </div>
           </div>
@@ -257,15 +301,13 @@ export const SocialPosts: React.FC = () => {
         </div>
 
         {filtered.length === 0 && (
-          <div className="text-center py-20 text-gray-600">No posts for this filter.</div>
+          <div className="text-center py-20 text-ink-600">No posts for this filter.</div>
         )}
 
         {hero && (
           <>
             {/* ── Hero / Featured Post ── */}
-            <div className="mb-8 rounded-3xl border border-white/8 bg-[#0d0d0d] overflow-hidden grid md:grid-cols-2 group hover:border-blue-500/20 transition-all duration-500">
-
-              {/* Screenshot */}
+            <div className="mb-8 rounded-3xl border border-white/[0.08] bg-[#0d0d0d] overflow-hidden grid md:grid-cols-2 group hover:border-blue-500/20 transition-all duration-500">
               <div className="relative bg-[#111] overflow-hidden min-h-[320px] flex items-center justify-center">
                 <img
                   src={hero.image}
@@ -274,7 +316,6 @@ export const SocialPosts: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0d0d0d]/60 pointer-events-none" />
 
-                {/* Platform badge */}
                 <div className="absolute top-4 left-4 flex gap-2">
                   {hero.category && (
                     <span className="px-2.5 py-1 bg-red-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-full">
@@ -286,9 +327,8 @@ export const SocialPosts: React.FC = () => {
                   </span>
                 </div>
 
-                {/* Play button */}
                 <button
-                  onClick={() => setActiveVideo(hero.driveId)}
+                  onClick={() => playDrive(hero.driveId)}
                   className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:bg-blue-400 transition-colors">
@@ -297,10 +337,9 @@ export const SocialPosts: React.FC = () => {
                 </button>
               </div>
 
-              {/* Info */}
               <div className="p-8 flex flex-col justify-between">
                 <div>
-                  <div className="inline-flex items-center gap-2 text-[10px] font-mono text-gray-600 uppercase tracking-widest mb-5">
+                  <div className="inline-flex items-center gap-2 text-[10px] font-mono text-ink-500 uppercase tracking-widest mb-5">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                     Top Performing Post
                   </div>
@@ -311,16 +350,15 @@ export const SocialPosts: React.FC = () => {
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm leading-tight">{hero.author}</p>
-                      <p className="text-gray-600 text-[10px] font-mono">{hero.date}</p>
+                      <p className="text-ink-500 text-[10px] font-mono">{hero.date}</p>
                     </div>
                   </div>
 
-                  <p className="text-gray-200 text-base leading-relaxed mb-6">{hero.description}</p>
+                  <p className="text-ink-200 text-base leading-relaxed mb-6">{hero.description}</p>
 
-                  {/* Views */}
                   <div className="flex items-baseline gap-2 mb-8">
                     <span className="text-4xl font-extrabold font-mono text-white">{hero.views}</span>
-                    <span className="text-gray-500 text-sm">
+                    <span className="text-ink-500 text-sm">
                       {hero.platform === 'LinkedIn' ? 'Engagements' : 'Views'}
                     </span>
                   </div>
@@ -328,7 +366,7 @@ export const SocialPosts: React.FC = () => {
 
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setActiveVideo(hero.driveId)}
+                    onClick={() => playDrive(hero.driveId)}
                     className="flex-1 py-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
                   >
                     <Icons.Play className="w-3.5 h-3.5 fill-current" /> Watch Video
@@ -337,7 +375,7 @@ export const SocialPosts: React.FC = () => {
                     href={hero.link}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+                    className="flex-1 py-3 bg-white/[0.05] hover:bg-white/[0.1] text-ink-300 hover:text-white text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
                   >
                     View on {hero.platform} <Icons.ExternalLink className="w-3.5 h-3.5" />
                   </a>
@@ -345,15 +383,13 @@ export const SocialPosts: React.FC = () => {
               </div>
             </div>
 
-            {/* ── Rest of Posts Grid ── */}
             {rest.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {rest.map((post) => (
                   <div
                     key={post.id}
-                    className="group flex flex-col bg-[#0d0d0d] rounded-2xl border border-white/5 hover:border-blue-500/20 overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
+                    className="group flex flex-col bg-[#0d0d0d] rounded-2xl border border-white/[0.05] hover:border-blue-500/20 overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
                   >
-                    {/* Screenshot thumbnail */}
                     <div className="relative bg-[#111] overflow-hidden" style={{ aspectRatio: '4/3' }}>
                       <img
                         src={post.image}
@@ -363,7 +399,6 @@ export const SocialPosts: React.FC = () => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent opacity-60" />
 
-                      {/* Platform + category badges */}
                       <div className="absolute top-3 left-3 flex gap-1.5">
                         {post.category && (
                           <span className="px-2 py-0.5 bg-red-500 text-white text-[8px] font-bold uppercase tracking-wider rounded-full">
@@ -378,9 +413,8 @@ export const SocialPosts: React.FC = () => {
                         }
                       </div>
 
-                      {/* Hover play overlay */}
                       <button
-                        onClick={() => setActiveVideo(post.driveId)}
+                        onClick={() => playDrive(post.driveId)}
                         className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <div className="w-12 h-12 rounded-full bg-blue-500/90 flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.5)]">
@@ -389,7 +423,6 @@ export const SocialPosts: React.FC = () => {
                       </button>
                     </div>
 
-                    {/* Card body */}
                     <div className="p-5 flex flex-col flex-1">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
@@ -398,7 +431,7 @@ export const SocialPosts: React.FC = () => {
                           </div>
                           <div>
                             <p className="text-xs font-bold text-white leading-none">{post.author}</p>
-                            <p className="text-[9px] text-gray-600 mt-0.5 font-mono">{post.date}</p>
+                            <p className="text-[9px] text-ink-500 mt-0.5 font-mono">{post.date}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 text-blue-400 bg-blue-400/10 px-2 py-1 rounded-full">
@@ -410,11 +443,11 @@ export const SocialPosts: React.FC = () => {
                         </div>
                       </div>
 
-                      <p className="text-gray-400 text-xs leading-relaxed flex-1 mb-4">{post.description}</p>
+                      <p className="text-ink-400 text-xs leading-relaxed flex-1 mb-4">{post.description}</p>
 
-                      <div className="flex gap-2 pt-3 border-t border-white/5">
+                      <div className="flex gap-2 pt-3 border-t border-white/[0.05]">
                         <button
-                          onClick={() => setActiveVideo(post.driveId)}
+                          onClick={() => playDrive(post.driveId)}
                           className="flex-1 py-2.5 bg-blue-600/80 hover:bg-blue-600 text-white text-[10px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5"
                         >
                           <Icons.Play className="w-3 h-3 fill-current" /> Watch
@@ -423,7 +456,7 @@ export const SocialPosts: React.FC = () => {
                           href={post.link}
                           target="_blank"
                           rel="noreferrer"
-                          className="flex-1 py-2.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-[10px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5"
+                          className="flex-1 py-2.5 bg-white/[0.05] hover:bg-white/[0.1] text-ink-400 hover:text-white text-[10px] font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5"
                         >
                           View Post <Icons.ExternalLink className="w-3 h-3" />
                         </a>
@@ -435,45 +468,136 @@ export const SocialPosts: React.FC = () => {
             )}
           </>
         )}
+
+        {/* ════ YOUTUBE SHORTS SECTION ════ */}
+        <div className="mt-24">
+          <header className="flex items-end justify-between mb-8 pb-5 border-b border-white/[0.06]">
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500 mb-1">Vertical · 9:16</p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h3 className="text-2xl font-bold tracking-tight">YouTube Shorts</h3>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-red-500/30 bg-red-500/5 text-[10px] font-mono uppercase tracking-widest text-red-400">
+                  <Icons.Youtube className="w-3 h-3" />
+                  YouTube
+                </span>
+              </div>
+              <p className="text-ink-500 text-sm mt-3 max-w-md">
+                Short-form cuts published natively to YouTube Shorts — click any to watch in the popup player.
+              </p>
+            </div>
+            <span className="text-[10px] font-mono text-ink-500">{youtubeShorts.length} shorts</span>
+          </header>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {youtubeShorts.map((s, idx) => (
+              <button
+                key={s.id}
+                onClick={() => playYoutube(s.id, s.url)}
+                className="group relative aspect-[9/16] rounded-2xl overflow-hidden border border-white/[0.08] bg-[#111] text-left hover:border-red-500/30 transition-all duration-300"
+              >
+                <img
+                  src={`https://i.ytimg.com/vi/${s.id}/hqdefault.jpg`}
+                  alt={s.title}
+                  className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+
+                {/* YouTube badge */}
+                <div className="absolute top-3 left-3">
+                  <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded">
+                    <Icons.Youtube className="w-3 h-3 fill-current" />
+                    Short
+                  </span>
+                </div>
+
+                {/* Index */}
+                <div className="absolute top-3 right-3">
+                  <span className="text-[10px] font-mono tabular-nums text-white bg-black/60 backdrop-blur border border-white/10 px-2 py-0.5 rounded">
+                    / {String(idx + 1).padStart(2, '0')}
+                  </span>
+                </div>
+
+                {/* Play overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="w-14 h-14 rounded-full bg-red-500 flex items-center justify-center shadow-[0_0_30px_rgba(239,68,68,0.5)]">
+                    <Icons.Play className="w-5 h-5 text-white fill-current translate-x-0.5" />
+                  </div>
+                </div>
+
+                {/* Bottom info */}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-ink-300 mb-2">
+                    <Icons.Eye className="w-3 h-3" />
+                    <span>{s.views} views</span>
+                  </div>
+                  <p className="text-sm text-white font-bold leading-snug line-clamp-3 group-hover:text-red-300 transition-colors">
+                    {s.title}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ── Cinema Player Modal ── */}
+      {/* ════ Unified Cinema Player Modal ════ */}
       {activeVideo && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-10"
           onClick={() => setActiveVideo(null)}
         >
           <button
-            className="absolute top-6 right-6 w-12 h-12 bg-white/5 border border-white/15 rounded-full flex items-center justify-center text-white hover:bg-red-500/20 hover:border-red-500/50 transition-all text-2xl leading-none"
+            className="absolute top-6 right-6 w-12 h-12 bg-white/[0.05] border border-white/15 rounded-full flex items-center justify-center text-white hover:bg-red-500/20 hover:border-red-500/50 transition-all text-2xl leading-none"
             onClick={() => setActiveVideo(null)}
+            aria-label="Close player"
           >
             ×
           </button>
 
           <div
-            className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black shadow-2xl"
+            className={`relative bg-black rounded-2xl overflow-hidden border border-white/10 shadow-2xl ${
+              activeVideo.source === 'youtube'
+                ? 'w-full max-w-[400px] aspect-[9/16]'
+                : 'w-full max-w-5xl aspect-video'
+            }`}
             onClick={e => e.stopPropagation()}
           >
-            <iframe
-              className="w-full h-full"
-              src={`https://drive.google.com/file/d/${activeVideo}/preview`}
-              title="Video player"
-              frameBorder="0"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-            />
+            {activeVideo.source === 'youtube' ? (
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube-nocookie.com/embed/${activeVideo.id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`}
+                title="YouTube Shorts player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <iframe
+                className="w-full h-full"
+                src={`https://drive.google.com/file/d/${activeVideo.id}/preview`}
+                title="Drive video player"
+                frameBorder="0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              />
+            )}
           </div>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 px-6 py-3 bg-black/60 backdrop-blur border border-white/10 rounded-2xl">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className="text-[10px] text-gray-400 font-mono tracking-widest">PLAYING · Click outside to close</span>
+            <span className={`w-2 h-2 rounded-full animate-pulse ${activeVideo.source === 'youtube' ? 'bg-red-500' : 'bg-blue-500'}`} />
+            <span className="text-[10px] text-ink-400 font-mono tracking-widest">
+              {activeVideo.source === 'youtube' ? 'YOUTUBE · CLICK OUTSIDE TO CLOSE' : 'PLAYING · CLICK OUTSIDE TO CLOSE'}
+            </span>
             <a
-              href={`https://drive.google.com/file/d/${activeVideo}/view`}
+              href={activeVideo.externalUrl ?? `https://drive.google.com/file/d/${activeVideo.id}/view`}
               target="_blank"
               rel="noreferrer"
-              className="px-4 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-full hover:bg-blue-500 transition-colors flex items-center gap-1.5"
+              className={`px-4 py-1.5 text-white text-[10px] font-bold rounded-full transition-colors flex items-center gap-1.5 ${
+                activeVideo.source === 'youtube' ? 'bg-red-600 hover:bg-red-500' : 'bg-blue-600 hover:bg-blue-500'
+              }`}
             >
-              Open in Drive <Icons.ExternalLink className="w-3 h-3" />
+              {activeVideo.source === 'youtube' ? 'Open on YouTube' : 'Open in Drive'}
+              <Icons.ExternalLink className="w-3 h-3" />
             </a>
           </div>
         </div>
