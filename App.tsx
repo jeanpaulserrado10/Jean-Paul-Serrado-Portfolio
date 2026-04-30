@@ -19,7 +19,7 @@ const App: React.FC = () => {
     { id: 'services', name: 'Services', component: <ThreeServices /> },
     { id: 'decks', name: 'Live Decks', component: <DeckShowcase /> },
     { id: 'video', name: 'Video Production', component: <VideoGallery /> },
-    { id: 'social', name: 'Social Posts', component: <SocialPosts /> },
+    { id: 'social', name: 'Short-Form Clips', component: <SocialPosts /> },
     { id: 'carousels', name: 'PDF Carousels', component: <Carousels /> },
     { id: 'creative', name: 'Campaigns', component: <CreativePortfolio /> },
     { id: 'experience', name: 'Experience', component: <WorkExperience /> },

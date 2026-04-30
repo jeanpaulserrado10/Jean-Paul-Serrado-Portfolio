@@ -206,19 +206,22 @@ export const SocialPosts: React.FC = () => {
       <div className="max-w-[1400px] mx-auto">
 
         <div className="flex items-center gap-4 mb-16">
-          <span className="text-[11px] font-mono text-ink-500 tabular-nums">[ 07 ]</span>
+          <span className="text-[11px] font-mono text-ink-500 tabular-nums">[ 06 ]</span>
           <div className="h-px flex-1 bg-white/[0.08] max-w-[80px]" />
-          <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-400">Social impact</span>
+          <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-400">Short-form clips · social posts</span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-8 mb-12">
           <div className="lg:col-span-5">
             <h2 className="text-5xl md:text-6xl font-extrabold tracking-[-0.03em] leading-[0.95] mb-6">
-              Short-form video, <br/>
+              Short-form clips, <br/>
               <span className="font-serif italic font-normal text-brand-lime">that performed.</span>
             </h2>
-            <p className="text-ink-400 text-lg leading-relaxed max-w-md">
-              High-impact short-form video produced for industry leaders — driving real views and engagement on X and LinkedIn.
+            <p className="text-ink-400 text-lg leading-relaxed max-w-md mb-4">
+              Short-form videos cut from interviews, events, keynotes, and testimonials — repurposed into snackable social posts that drove real views and engagement on X and LinkedIn.
+            </p>
+            <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500">
+              Long-form source → short-form social
             </p>
           </div>
           <div className="lg:col-span-7 self-end">

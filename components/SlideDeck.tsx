@@ -70,8 +70,21 @@ export const SlideDeck: React.FC<SlideDeckProps> = ({ slides }) => {
         }
       }
     };
+    // Custom jump-to-slide event so any component (e.g. Hero shortcut buttons)
+    // can navigate to any slide by index without relying on number-key parsing.
+    const handleJump = (e: Event) => {
+      const ce = e as CustomEvent<{ index: number }>;
+      if (typeof ce.detail?.index === 'number') {
+        goToSlide(ce.detail.index);
+      }
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('slide:jump' as any, handleJump);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('slide:jump' as any, handleJump);
+    };
   }, [nextSlide, prevSlide, goToSlide, slides.length, showIndex, showShortcuts]);
 
   const variants = {

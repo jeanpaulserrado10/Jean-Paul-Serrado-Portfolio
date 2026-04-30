@@ -10,6 +10,30 @@ const tickerItems = [
   'Bilingual EN / ES',
 ];
 
+interface ShortcutTarget {
+  index: number;        // zero-based slide index
+  display: string;      // visible position label (e.g. "02")
+  label: string;
+  icon: React.FC<{ className?: string }>;
+}
+
+const shortcuts: ShortcutTarget[] = [
+  { index: 1,  display: '02', label: 'Impact',           icon: Icons.BarChart },
+  { index: 2,  display: '03', label: 'Services',         icon: Icons.Zap },
+  { index: 3,  display: '04', label: 'Live Decks',       icon: Icons.PlaySquare },
+  { index: 4,  display: '05', label: 'Video Production', icon: Icons.Video },
+  { index: 5,  display: '06', label: 'Short-Form Clips', icon: Icons.Film },
+  { index: 6,  display: '07', label: 'PDF Carousels',    icon: Icons.FileText },
+  { index: 7,  display: '08', label: 'Campaigns',        icon: Icons.Sparkles },
+  { index: 8,  display: '09', label: 'Experience',       icon: Icons.TrendingUp },
+  { index: 9,  display: '10', label: 'Tech Stack',       icon: Icons.Cpu },
+  { index: 10, display: '11', label: 'Contact',          icon: Icons.Mail },
+];
+
+const jumpToSlide = (index: number) => {
+  window.dispatchEvent(new CustomEvent('slide:jump', { detail: { index } }));
+};
+
 export const Hero: React.FC = () => {
   return (
     <section className="min-h-full flex flex-col bg-brand-black text-ink-100 relative">
@@ -58,7 +82,7 @@ export const Hero: React.FC = () => {
         </h1>
 
         {/* Sub headline + CTA */}
-        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-end">
+        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-end mb-16">
           <div className="md:col-span-7">
             <p className="text-lg md:text-xl text-ink-300 max-w-2xl leading-relaxed">
               Hi, I'm <span className="text-ink-100">Jean-Paul</span>. I'm a bilingual creative producer who builds <span className="text-ink-100">video, decks, and social-ready visual assets</span> for founders, agencies, and remote teams — using AI-accelerated workflows that ship fast without cutting corners.
@@ -84,8 +108,56 @@ export const Hero: React.FC = () => {
           </div>
         </div>
 
+        {/* ════════ Slide shortcuts — direct jump to any section ════════ */}
+        <div className="border-t border-white/[0.06] pt-10 mb-16">
+          <div className="flex items-center gap-4 mb-6">
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500">Jump to a section</span>
+            <div className="h-px flex-1 bg-white/[0.06]" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-600 hidden sm:block">
+              Click any tile
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            {shortcuts.map((s) => {
+              const Icon = s.icon;
+              return (
+                <button
+                  key={s.label}
+                  onClick={() => jumpToSlide(s.index)}
+                  className="group relative flex items-center gap-3 px-4 py-3.5 rounded-lg border border-white/[0.08] bg-white/[0.02] hover:bg-brand-lime hover:border-brand-lime hover:text-brand-black text-ink-200 transition-all duration-200"
+                  aria-label={`Jump to ${s.label}`}
+                >
+                  <Icon className="w-4 h-4 text-ink-400 group-hover:text-brand-black shrink-0 transition-colors" />
+                  <span className="text-sm font-medium flex-1 text-left truncate">{s.label}</span>
+                  <span className="font-mono text-[10px] tabular-nums text-ink-500 group-hover:text-brand-black/60 shrink-0 transition-colors">
+                    {s.display}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Quick legend */}
+          <div className="mt-5 flex items-center gap-4 text-[10px] font-mono uppercase tracking-widest text-ink-600">
+            <span className="hidden sm:inline-flex items-center gap-1.5">
+              <kbd className="bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded">←</kbd>
+              <kbd className="bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded">→</kbd>
+              navigate
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <kbd className="bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded">?</kbd>
+              all shortcuts
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <kbd className="bg-white/[0.04] border border-white/[0.08] px-1.5 py-0.5 rounded">i</kbd>
+              full index
+            </span>
+          </div>
+        </div>
+
         {/* Quick facts grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] mt-20 border-y border-white/[0.06]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] border-y border-white/[0.06]">
           {[
             { label: 'Years in B2B Media', value: '3+' },
             { label: 'Content Output Scale', value: '300%' },
