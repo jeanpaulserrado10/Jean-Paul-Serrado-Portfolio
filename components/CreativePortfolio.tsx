@@ -1,10 +1,10 @@
 import React from 'react';
 import { Icons } from './Icons';
 
-interface PortfolioImage {
-  url: string;
+interface CampaignVideo {
+  src: string;
   label: string;
-  overlay?: React.ReactNode;
+  caption: string;
 }
 
 interface PortfolioItem {
@@ -12,7 +12,7 @@ interface PortfolioItem {
   title: string;
   client: string;
   year: string;
-  images: PortfolioImage[];
+  videos: CampaignVideo[];
   challenge: string;
   action: string;
   outcome: string;
@@ -21,49 +21,34 @@ interface PortfolioItem {
 
 const portfolioItems: PortfolioItem[] = [
   {
-    category: 'Service Launch Campaign',
-    title: 'Spruces — Post-Construction',
-    client: 'Spruces (Australia)',
-    year: '2024 — 2025',
-    images: [
+    category: 'Generative Campaign',
+    title: 'Pomelli — Creative Generative Series',
+    client: 'Pomelli',
+    year: '2025',
+    videos: [
       {
-        url: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=800&auto=format&fit=crop',
-        label: 'Site Handover Visual',
-        overlay: (
-          <div className="absolute top-5 left-5 bg-[#183630]/95 px-5 py-3 rounded-lg border-l-2 border-[#c7de6b] shadow-xl backdrop-blur-sm">
-            <h3 className="text-[#c7de6b] font-bold text-3xl tracking-tight leading-none mb-0.5">spruces.</h3>
-            <span className="text-white text-[9px] uppercase tracking-widest font-mono">Post-Construction Ready</span>
-          </div>
-        ),
+        src: '/clips/pomelli-1.mp4',
+        label: 'Hero Vertical · 9:16',
+        caption: 'Brand-led concept reveal',
       },
       {
-        url: 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?q=80&w=400&auto=format&fit=crop',
-        label: 'Campaign Social Asset',
-        overlay: (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#183630]/85 p-6 text-center backdrop-blur-[2px]">
-            <p className="text-white font-bold text-[10px] uppercase tracking-[0.25em] mb-2">Not Satisfied?</p>
-            <h4 className="text-[#c7de6b] font-extrabold text-3xl leading-none drop-shadow-md">Talk Dirty<br/>To Us</h4>
-          </div>
-        ),
+        src: '/clips/pomelli-2.mp4',
+        label: 'Story Cut · 9:16',
+        caption: 'Narrative-driven product moment',
       },
       {
-        url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=400&auto=format&fit=crop',
-        label: 'Service Integration',
-        overlay: (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-black via-brand-black/85 to-transparent p-5 pt-10">
-            <div className="text-[#c7de6b] text-[10px] font-bold mb-1 tracking-widest font-mono">PROTOCOL 3</div>
-            <div className="text-white text-base font-bold leading-tight">Handover certified.</div>
-          </div>
-        ),
+        src: '/clips/pomelli-3.mp4',
+        label: 'Loop Asset · 9:16',
+        caption: 'Loopable social-ready cut',
       },
     ],
-    challenge: "Spruces needed to dominate the 'Post-Construction' niche. The challenge was applying their vibrant 'Lime & Forest' brand identity to gritty industrial imagery without losing the premium feel.",
-    action: 'Ingested the Spruces Brand Guide into Nano Banana. Generated hyper-realistic scenes of branded crews in finished luxury builds. Automated "Talk Dirty To Us" social assets.',
-    outcome: 'The campaign increased quote requests by 300% in week 1. Established authority in the construction sector immediately with "Protocol 3" messaging.',
+    challenge: 'Pomelli needed a series of generative short-form videos that felt visually consistent, brand-aligned, and ready to push to social — without the timeline and budget of a traditional shoot.',
+    action: 'Built a generative creative pipeline using AI video models, storyboarded each cut to a single visual through-line, and produced three complete 9:16 assets in days, not weeks. Each clip was edited for autoplay-friendly pacing and zero-context comprehension.',
+    outcome: 'A coherent campaign series of three on-brand videos delivered at AI speed — looped, social-ready, and visually unified across all three.',
     metrics: [
-      { label: 'Quote Req.', value: '+300%' },
-      { label: 'Brand Recall', value: 'High' },
-      { label: 'Assets Shipped', value: '25+' },
+      { label: 'Videos Shipped', value: '3' },
+      { label: 'Aspect', value: '9:16' },
+      { label: 'Turnaround', value: 'Days' },
     ],
   },
 ];
@@ -86,7 +71,7 @@ export const CreativePortfolio: React.FC = () => {
               <span className="font-serif italic font-normal text-brand-lime">real brands.</span>
             </h2>
             <p className="text-ink-400 text-lg leading-relaxed max-w-md">
-              How a generative workflow translates a brand identity into shippable, on-brand creative — not stock photos.
+              How a generative video workflow translates a brand into shippable, on-brand creative — three vertical cuts, one cohesive series.
             </p>
           </div>
         </div>
@@ -114,34 +99,47 @@ export const CreativePortfolio: React.FC = () => {
               </dl>
             </header>
 
-            {/* Image gallery */}
-            <div className="grid grid-cols-2 grid-rows-2 gap-3 h-[450px] md:h-[600px] mb-12">
-              <div className="col-span-1 row-span-2 relative rounded-xl overflow-hidden border border-white/[0.08] bg-ink-800 group">
-                <img src={item.images[0].url} alt={item.images[0].label} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700" />
-                {item.images[0].overlay}
-                <div className="absolute bottom-3 right-3">
-                  <span className="bg-brand-black/80 backdrop-blur border border-white/10 text-ink-300 text-[9px] font-mono px-2 py-1 rounded">
-                    {item.images[0].label}
-                  </span>
-                </div>
-              </div>
-              {[1, 2].map(i => (
-                <div key={i} className="col-span-1 row-span-1 relative rounded-xl overflow-hidden border border-white/[0.08] bg-ink-800 group">
-                  <img src={item.images[i].url} alt={item.images[i].label} className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700" />
-                  {item.images[i].overlay}
-                  <div className="absolute bottom-3 right-3">
-                    <span className="bg-brand-black/80 backdrop-blur border border-white/10 text-ink-300 text-[9px] font-mono px-2 py-1 rounded">
-                      {item.images[i].label}
+            {/* Vertical video gallery — 3 autoplay-loop clips */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-12">
+              {item.videos.map((video, vi) => (
+                <figure
+                  key={vi}
+                  className="group relative aspect-[9/16] rounded-xl overflow-hidden border border-white/[0.08] bg-ink-800"
+                >
+                  <video
+                    src={video.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-cover"
+                  />
+
+                  {/* Top label */}
+                  <div className="absolute top-3 left-3 right-3 flex items-start justify-between pointer-events-none">
+                    <span className="bg-brand-black/70 backdrop-blur border border-white/10 text-ink-200 text-[9px] font-mono uppercase tracking-widest px-2 py-1 rounded">
+                      {video.label}
+                    </span>
+                    <span className="bg-brand-lime text-brand-black text-[9px] font-mono font-bold uppercase tracking-widest px-2 py-1 rounded flex items-center gap-1">
+                      <span className="w-1 h-1 rounded-full bg-brand-black animate-pulse" />
+                      LIVE
                     </span>
                   </div>
-                </div>
+
+                  {/* Bottom caption */}
+                  <figcaption className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-brand-black via-brand-black/70 to-transparent">
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-ink-400 mb-1">/ {String(vi + 1).padStart(2, '0')}</p>
+                    <p className="text-sm text-ink-100 font-medium leading-snug">{video.caption}</p>
+                  </figcaption>
+                </figure>
               ))}
             </div>
 
-            {/* Footer note */}
+            {/* Tool credit */}
             <div className="flex items-center gap-2 mb-12 px-4 py-2.5 bg-brand-card/50 border border-white/[0.06] rounded-full w-fit mx-auto">
               <Icons.Sparkles className="w-3.5 h-3.5 text-brand-lime" />
-              <span className="text-xs font-mono text-ink-400">Generated with Nano Banana Pro</span>
+              <span className="text-xs font-mono text-ink-400">Generative video pipeline</span>
             </div>
 
             {/* Case study grid */}

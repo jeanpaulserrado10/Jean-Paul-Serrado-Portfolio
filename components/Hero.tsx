@@ -25,7 +25,7 @@ export const Hero: React.FC = () => {
             Available · Q2 2026
           </div>
           <div className="hidden md:flex items-center gap-6">
-            <span>Quito, Ecuador · UTC-5</span>
+            <span>Quito, Ecuador</span>
             <span className="text-ink-700">|</span>
             <span>EN · C1 / ES · Native</span>
           </div>
@@ -90,7 +90,7 @@ export const Hero: React.FC = () => {
             { label: 'Years in B2B Media', value: '3+' },
             { label: 'Content Output Scale', value: '300%' },
             { label: 'Languages', value: 'EN / ES' },
-            { label: 'Time Zone', value: 'UTC-5' },
+            { label: 'Remote', value: 'Worldwide' },
           ].map((fact, idx) => (
             <div key={idx} className="bg-brand-black px-6 py-6">
               <p className="text-2xl md:text-3xl font-extrabold text-ink-100 tabular-nums tracking-tight mb-1">

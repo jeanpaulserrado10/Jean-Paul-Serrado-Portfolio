@@ -1,12 +1,20 @@
 import React from 'react';
 import { Icons } from './Icons';
 
-const mainServices = [
+interface Capability {
+  number: string;
+  category: string;
+  title: string;
+  description: string;
+  deliverables: string[];
+}
+
+const capabilities: Capability[] = [
   {
     number: '01',
+    category: 'Video & Content Production',
     title: 'Video Production',
-    short: 'Video Editing',
-    description: 'Short-form social cuts, promotional videos, event coverage, and learning videos — across vertical and landscape formats. From raw footage to polished edit with hooks, subtitles, and motion design.',
+    description: 'Short-form social cuts, promotional and brand videos, event coverage, and learning content — across vertical and landscape formats. From raw footage to polished edit with hooks, subtitles, and motion design.',
     deliverables: [
       'Short-form social edits (Shorts, Reels, TikTok)',
       'Promotional & brand videos',
@@ -16,8 +24,8 @@ const mainServices = [
   },
   {
     number: '02',
+    category: 'Deck & Visual Design',
     title: 'Presentation Decks',
-    short: 'Deck Design',
     description: 'Investor decks, sales presentations, and brand storytelling slides designed to look sharp and communicate clearly — built in the right tool for the job, every time.',
     deliverables: [
       'Pitch decks for founders',
@@ -25,12 +33,49 @@ const mainServices = [
       'Course & keynote slides',
     ],
   },
+  {
+    number: '03',
+    category: 'Content Strategy & SEO',
+    title: 'Content Systems',
+    description: 'SEO-optimized content systems that scale output without breaking quality. From keyword research to AI-augmented production pipelines that ship 18 articles + 30 videos per quarter.',
+    deliverables: [
+      'SEO content strategy & keyword research',
+      'AI content pipelines (300% output scale)',
+      'Editorial workflows & content calendars',
+      'On-brand metadata & copywriting',
+    ],
+  },
+  {
+    number: '04',
+    category: 'AEO & GEO',
+    title: 'AI Search Visibility',
+    description: 'The new search layer. Optimize content for both answer engines (featured snippets, voice search) and generative engines (ChatGPT, Perplexity, Gemini) — so your brand shows up wherever people ask questions in your category, not just where they search.',
+    deliverables: [
+      'AI citation audits across ChatGPT, Perplexity, Gemini',
+      'Schema markup & structured answer optimization',
+      'Featured snippet & answer box targeting',
+      'Brand mention strategy for generative engines',
+    ],
+  },
+  {
+    number: '05',
+    category: 'Reporting & Analytics',
+    title: 'Performance Reporting',
+    description: 'Custom dashboards and client-facing reports that turn raw platform data into clear performance stories — built in GA4, Looker Studio, and custom tools when off-the-shelf isn\'t enough.',
+    deliverables: [
+      'GA4 & Looker Studio dashboards',
+      'Custom client reports',
+      'Campaign ROI tracking',
+      'Social analytics',
+      'GEO & AEO reports',
+    ],
+  },
 ];
 
 const addOns = [
   {
     title: 'Custom Visual Assets',
-    desc: 'Bespoke imagery built specifically for your decks, videos, and social posts. No stock photos.',
+    desc: 'Bespoke imagery built specifically for decks, videos, and social posts. No stock photos.',
     icon: Icons.Image,
   },
   {
@@ -56,40 +101,51 @@ export const ThreeServices: React.FC = () => {
           <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-400">What I do</span>
         </div>
 
-        {/* Main services */}
-        <div className="grid lg:grid-cols-12 gap-8 mb-24">
-          <div className="lg:col-span-5">
+        {/* Main framing + capability list */}
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 mb-24">
+
+          {/* Framing column — sticky on desktop so it stays as you scroll the cards */}
+          <div className="lg:col-span-5 lg:sticky lg:top-8 self-start">
             <h2 className="text-5xl md:text-6xl font-extrabold tracking-[-0.03em] leading-[0.95] mb-6">
-              Two services. <br/>
-              <span className="font-serif italic font-normal text-brand-lime">Done well.</span>
+              What I build. <br/>
+              <span className="font-serif italic font-normal text-brand-lime">End-to-end.</span>
             </h2>
-            <p className="text-ink-400 text-lg leading-relaxed max-w-md">
-              Tight focus, AI-accelerated workflows, human craft. Each deliverable shipped fast — without cutting corners.
+            <p className="text-ink-400 text-lg leading-relaxed max-w-md mb-6">
+              Content operations that ship — strategy, production, and reporting in one loop. AI-accelerated where it speeds the work up. Hand-crafted where craft matters.
+            </p>
+            <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500 border-l-2 border-brand-lime pl-4">
+              {capabilities.length} capabilities · 1 producer
             </p>
           </div>
 
+          {/* Capability cards */}
           <div className="lg:col-span-7 space-y-px">
-            {mainServices.map((service, idx) => (
+            {capabilities.map((cap) => (
               <div
-                key={idx}
-                className="group border border-white/[0.06] hover:border-brand-lime/30 bg-brand-card/30 hover:bg-brand-card/60 transition-all duration-300 p-8 md:p-10"
+                key={cap.number}
+                className="group border border-white/[0.06] hover:border-brand-lime/30 bg-brand-card/30 hover:bg-brand-card/60 transition-all duration-300 p-7 md:p-9"
               >
-                <div className="flex items-start justify-between gap-6 mb-6">
-                  <div>
-                    <p className="text-[11px] font-mono text-ink-500 tabular-nums mb-3">{service.number}</p>
-                    <h3 className="text-3xl md:text-4xl font-extrabold tracking-[-0.02em] text-ink-100 leading-tight">
-                      {service.title}
-                    </h3>
-                  </div>
-                  <span className="shrink-0 text-[10px] font-mono uppercase tracking-widest text-ink-500 border border-white/[0.08] px-2.5 py-1 rounded">
-                    {service.short}
-                  </span>
+                {/* Card header — number + category tag */}
+                <div className="flex items-center justify-between gap-4 mb-5">
+                  <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500 group-hover:text-brand-lime transition-colors">
+                    {cap.number} — {cap.category}
+                  </p>
+                  <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-ink-700 group-hover:bg-brand-lime transition-colors" />
                 </div>
-                <p className="text-ink-300 text-base leading-relaxed mb-8 max-w-xl">
-                  {service.description}
+
+                {/* Title */}
+                <h3 className="text-2xl md:text-3xl font-extrabold tracking-[-0.02em] text-ink-100 leading-tight mb-4">
+                  {cap.title}
+                </h3>
+
+                {/* Description */}
+                <p className="text-ink-300 text-base leading-relaxed mb-6 max-w-2xl">
+                  {cap.description}
                 </p>
+
+                {/* Deliverables */}
                 <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5">
-                  {service.deliverables.map((d, dIdx) => (
+                  {cap.deliverables.map((d, dIdx) => (
                     <li key={dIdx} className="flex items-start gap-2.5 text-sm text-ink-400">
                       <span className="text-brand-lime mt-1.5 shrink-0">→</span>
                       <span>{d}</span>
@@ -106,7 +162,7 @@ export const ThreeServices: React.FC = () => {
           <div className="flex items-end justify-between mb-10 pb-6 border-b border-white/[0.06]">
             <div>
               <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500 mb-2">Also available</p>
-              <h3 className="text-2xl md:text-3xl font-bold tracking-tight">Add-ons that ship alongside the work</h3>
+              <h3 className="text-2xl md:text-3xl font-bold tracking-tight">Brand visuals that ship alongside the work</h3>
             </div>
           </div>
 

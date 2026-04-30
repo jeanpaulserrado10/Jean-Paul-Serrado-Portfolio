@@ -70,7 +70,13 @@ export const VideoGallery: React.FC = () => {
           <header className="flex items-end justify-between mb-8 pb-5 border-b border-white/[0.06]">
             <div>
               <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500 mb-1">Featured productions</p>
-              <h3 className="text-2xl font-bold tracking-tight">Brand & Learning Videos</h3>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h3 className="text-2xl font-bold tracking-tight">Brand & Learning Videos</h3>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-brand-purple/30 bg-brand-purple/5 text-[10px] font-mono uppercase tracking-widest text-brand-purple">
+                  <Icons.Bot className="w-3 h-3" />
+                  Made with Synthesia
+                </span>
+              </div>
             </div>
             <span className="text-[10px] font-mono text-ink-500">{brandVideos.length} videos</span>
           </header>
@@ -168,7 +174,13 @@ export const VideoGallery: React.FC = () => {
           <header className="flex items-end justify-between mb-8 pb-5 border-b border-white/[0.06]">
             <div>
               <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-500 mb-1">Avatar-generated</p>
-              <h3 className="text-2xl font-bold tracking-tight">Short-Form Shorts</h3>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h3 className="text-2xl font-bold tracking-tight">Short-Form Shorts</h3>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-blue-400/30 bg-blue-400/5 text-[10px] font-mono uppercase tracking-widest text-blue-400">
+                  <Icons.Bot className="w-3 h-3" />
+                  Made with HeyGen
+                </span>
+              </div>
             </div>
             <span className="text-[10px] font-mono text-ink-500">{shorts.length} shorts</span>
           </header>
