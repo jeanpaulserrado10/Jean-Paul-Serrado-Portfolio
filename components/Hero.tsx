@@ -23,14 +23,15 @@ interface ShortcutTarget {
 const shortcuts: ShortcutTarget[] = [
   { index: 1,  display: '02', label: 'Impact',           icon: Icons.BarChart,   hint: 'Numbers & track record' },
   { index: 2,  display: '03', label: 'Services',         icon: Icons.Zap,        hint: '5 capabilities' },
-  { index: 3,  display: '04', label: 'Live Decks',       icon: Icons.PlaySquare, hint: 'Interactive deck samples' },
-  { index: 4,  display: '05', label: 'Video Production', icon: Icons.Video,      hint: 'Brand, learning & shorts' },
-  { index: 5,  display: '06', label: 'Short-Form Clips', icon: Icons.Film,       hint: 'Cuts from interviews & events' },
-  { index: 6,  display: '07', label: 'PDF Carousels',    icon: Icons.FileText,   hint: 'LinkedIn & Instagram' },
-  { index: 7,  display: '08', label: 'Campaigns',        icon: Icons.Sparkles,   hint: 'Featured generative work' },
-  { index: 8,  display: '09', label: 'Experience',       icon: Icons.TrendingUp, hint: 'Roles & case studies' },
-  { index: 9,  display: '10', label: 'Tech Stack',       icon: Icons.Cpu,        hint: '20+ tools across 4 disciplines' },
-  { index: 10, display: '11', label: 'Contact',          icon: Icons.Mail,       hint: "Let's work together" },
+  { index: 3,  display: '04', label: 'GEO / AEO',        icon: Icons.Search,     hint: 'AI search visibility · featured' },
+  { index: 4,  display: '05', label: 'Live Decks',       icon: Icons.PlaySquare, hint: 'Interactive deck samples' },
+  { index: 5,  display: '06', label: 'Video Production', icon: Icons.Video,      hint: 'Brand, learning & shorts' },
+  { index: 6,  display: '07', label: 'Short-Form Clips', icon: Icons.Film,       hint: 'Cuts from interviews & events' },
+  { index: 7,  display: '08', label: 'PDF Carousels',    icon: Icons.FileText,   hint: 'LinkedIn & Instagram' },
+  { index: 8,  display: '09', label: 'Campaigns',        icon: Icons.Sparkles,   hint: 'Featured generative work' },
+  { index: 9,  display: '10', label: 'Experience',       icon: Icons.TrendingUp, hint: 'Roles & case studies' },
+  { index: 10, display: '11', label: 'Tech Stack',       icon: Icons.Cpu,        hint: '20+ tools across 4 disciplines' },
+  { index: 11, display: '12', label: 'Contact',          icon: Icons.Mail,       hint: "Let's work together" },
 ];
 
 const jumpToSlide = (index: number) => {
@@ -38,13 +39,12 @@ const jumpToSlide = (index: number) => {
 };
 
 const capabilityTags = [
-  'Strategy',
-  'SEO',
-  'AEO / GEO',
-  'Video',
-  'Decks',
-  'Social Content',
-  'Reporting',
+  { label: 'GEO / AEO', highlight: true },
+  { label: 'SEO Strategy' },
+  { label: 'Video Production' },
+  { label: 'Presentation Decks' },
+  { label: 'Social Content' },
+  { label: 'Performance Reporting' },
 ];
 
 export const Hero: React.FC = () => {
@@ -80,10 +80,17 @@ export const Hero: React.FC = () => {
           <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-400">Introduction</span>
         </div>
 
-        {/* Role line */}
-        <p className="text-[11px] md:text-xs font-mono uppercase tracking-[0.35em] text-brand-lime mb-6">
-          AI-Native Digital Marketing Producer
-        </p>
+        {/* Role line — two-tier so GEO/AEO is visible within 2 seconds */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 mb-6">
+          <p className="text-[11px] md:text-xs font-mono uppercase tracking-[0.35em] text-brand-lime">
+            AI-Native Digital Marketing Producer
+          </p>
+          <span className="text-ink-700">·</span>
+          <p className="inline-flex items-center gap-1.5 text-[11px] md:text-xs font-mono uppercase tracking-[0.3em] text-ink-200 bg-brand-lime/10 border border-brand-lime/30 px-2.5 py-1 rounded">
+            <Icons.Search className="w-3 h-3 text-brand-lime" />
+            <span>GEO + AEO Programs</span>
+          </p>
+        </div>
 
         {/* Headline */}
         <h1 className="font-extrabold tracking-[-0.04em] leading-[0.92] mb-10">
@@ -95,6 +102,11 @@ export const Hero: React.FC = () => {
             <span className="text-ink-100">{' '}at AI speed.</span>
           </span>
         </h1>
+
+        {/* Quick-scan GEO highlight strip */}
+        <p className="text-[11px] md:text-xs font-mono uppercase tracking-[0.25em] text-ink-400 mb-10 border-l-2 border-brand-lime pl-3">
+          Generative Engine Optimization · Answer Engine Optimization · the path of least resistance for AI search
+        </p>
 
         {/* Sub headline + CTA */}
         <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-end mb-10">
@@ -108,9 +120,13 @@ export const Hero: React.FC = () => {
               {capabilityTags.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="text-[10px] font-mono uppercase tracking-widest text-ink-400 border border-white/[0.08] bg-white/[0.02] px-2.5 py-1 rounded"
+                  className={`text-[10px] font-mono uppercase tracking-widest px-2.5 py-1 rounded transition-colors ${
+                    tag.highlight
+                      ? 'text-brand-lime border border-brand-lime/40 bg-brand-lime/10 font-bold'
+                      : 'text-ink-400 border border-white/[0.08] bg-white/[0.02]'
+                  }`}
                 >
-                  {tag}
+                  {tag.label}
                 </span>
               ))}
             </div>

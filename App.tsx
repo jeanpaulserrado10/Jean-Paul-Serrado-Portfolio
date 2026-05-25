@@ -2,6 +2,7 @@ import React from 'react';
 import { Hero } from './components/Hero';
 import { Stats } from './components/Stats';
 import { ThreeServices } from './components/ThreeServices';
+import { GEOShowcase } from './components/GEOShowcase';
 import { DeckShowcase } from './components/DeckShowcase';
 import { VideoGallery } from './components/VideoGallery';
 import { SocialPosts } from './components/SocialPosts';
@@ -17,6 +18,7 @@ const App: React.FC = () => {
     { id: 'hero', name: 'Intro', component: <Hero /> },
     { id: 'stats', name: 'Impact', component: <Stats /> },
     { id: 'services', name: 'Services', component: <ThreeServices /> },
+    { id: 'geo', name: 'GEO / AEO', component: <GEOShowcase /> },
     { id: 'decks', name: 'Live Decks', component: <DeckShowcase /> },
     { id: 'video', name: 'Video Production', component: <VideoGallery /> },
     { id: 'social', name: 'Short-Form Clips', component: <SocialPosts /> },
