@@ -2,19 +2,21 @@ import React from 'react';
 import { Icons } from './Icons';
 
 const tickerItems = [
+  'Content Strategy & SEO',
+  'AI Search Visibility (AEO · GEO)',
   'Video Production',
   'Presentation Decks',
-  'Social Media Graphics',
-  'Custom Visual Assets',
+  'Social Media Content',
+  'Performance Reporting',
   'AI-Accelerated Workflows',
   'Bilingual EN / ES',
 ];
 
 interface ShortcutTarget {
-  index: number;        // zero-based slide index
-  display: string;      // visible position label (e.g. "02")
+  index: number;
+  display: string;
   label: string;
-  hint?: string;        // optional small subtitle for clarity
+  hint?: string;
   icon: React.FC<{ className?: string }>;
 }
 
@@ -34,6 +36,16 @@ const shortcuts: ShortcutTarget[] = [
 const jumpToSlide = (index: number) => {
   window.dispatchEvent(new CustomEvent('slide:jump', { detail: { index } }));
 };
+
+const capabilityTags = [
+  'Strategy',
+  'SEO',
+  'AEO / GEO',
+  'Video',
+  'Decks',
+  'Social Content',
+  'Reporting',
+];
 
 export const Hero: React.FC = () => {
   return (
@@ -62,32 +74,46 @@ export const Hero: React.FC = () => {
       <div className="flex-1 flex flex-col justify-center px-6 md:px-12 py-16 md:py-24 max-w-[1400px] mx-auto w-full">
 
         {/* Section number + label */}
-        <div className="flex items-center gap-4 mb-12">
+        <div className="flex items-center gap-4 mb-10">
           <span className="text-[11px] font-mono text-ink-500 tabular-nums">[ 00 ]</span>
           <div className="h-px flex-1 bg-white/[0.08] max-w-[80px]" />
           <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-ink-400">Introduction</span>
         </div>
 
+        {/* Role line */}
+        <p className="text-[11px] md:text-xs font-mono uppercase tracking-[0.35em] text-brand-lime mb-6">
+          AI-Native Digital Marketing Producer
+        </p>
+
         {/* Headline */}
         <h1 className="font-extrabold tracking-[-0.04em] leading-[0.92] mb-10">
           <span className="block text-[14vw] md:text-[10vw] lg:text-[8.5vw] xl:text-[140px] text-ink-100">
-            Creative
+            Digital marketing,
           </span>
           <span className="block text-[14vw] md:text-[10vw] lg:text-[8.5vw] xl:text-[140px] -mt-2">
-            <span className="text-ink-100">production,</span>{' '}
             <span className="font-serif italic font-normal text-brand-lime tracking-tight">delivered</span>
-          </span>
-          <span className="block text-[14vw] md:text-[10vw] lg:text-[8.5vw] xl:text-[140px] -mt-2 text-ink-100">
-            at AI speed.
+            <span className="text-ink-100">{' '}at AI speed.</span>
           </span>
         </h1>
 
         {/* Sub headline + CTA */}
-        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-end mb-16">
+        <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-end mb-10">
           <div className="md:col-span-7">
             <p className="text-lg md:text-xl text-ink-300 max-w-2xl leading-relaxed">
-              Hi, I'm <span className="text-ink-100">Jean-Paul</span>. I'm a bilingual creative producer who builds <span className="text-ink-100">video, decks, and social-ready visual assets</span> for founders, agencies, and remote teams — using AI-accelerated workflows that ship fast without cutting corners.
+              Hi, I'm <span className="text-ink-100">Jean-Paul</span>. I run <span className="text-ink-100">end-to-end content operations</span> for founders, agencies, and B2B teams — strategy, SEO, AI search visibility, video, decks, social, and analytics. Bilingual, remote-native, and AI-accelerated where it speeds the work up; hand-crafted where craft matters.
             </p>
+
+            {/* Capability tags row */}
+            <div className="flex flex-wrap gap-1.5 mt-6">
+              {capabilityTags.map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="text-[10px] font-mono uppercase tracking-widest text-ink-400 border border-white/[0.08] bg-white/[0.02] px-2.5 py-1 rounded"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="md:col-span-5 flex flex-col sm:flex-row md:flex-col gap-3">
             <a
@@ -165,11 +191,12 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Quick facts grid */}
-        <div className="grid grid-cols-3 gap-px bg-white/[0.06] border-y border-white/[0.06]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/[0.06] border-y border-white/[0.06]">
           {[
-            { label: 'Years in B2B Media', value: '3+' },
-            { label: 'Content Output Scale', value: '300%' },
-            { label: 'Languages', value: 'EN / ES' },
+            { label: 'Years in B2B Marketing', value: '3+' },
+            { label: 'Content Velocity', value: '300%' },
+            { label: 'Capabilities', value: '5' },
+            { label: 'Bilingual', value: 'EN / ES' },
           ].map((fact, idx) => (
             <div key={idx} className="bg-brand-black px-6 py-6">
               <p className="text-2xl md:text-3xl font-extrabold text-ink-100 tabular-nums tracking-tight mb-1">

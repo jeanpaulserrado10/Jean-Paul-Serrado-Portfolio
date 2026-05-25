@@ -111,7 +111,7 @@ export const SlideDeck: React.FC<SlideDeckProps> = ({ slides }) => {
             </div>
             <div className="hidden sm:block">
               <p className="text-ink-100 font-semibold text-[13px] leading-none tracking-tight">Jean-Paul Serrado</p>
-              <p className="text-ink-500 text-[10px] font-mono leading-none mt-1.5 tracking-wider uppercase">Creative Producer</p>
+              <p className="text-ink-500 text-[10px] font-mono leading-none mt-1.5 tracking-wider uppercase">Digital Marketing Producer</p>
             </div>
           </div>
 
