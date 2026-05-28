@@ -9,7 +9,7 @@
   <meta property="og:description" content="Generative Engine Optimization for B2B brands." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <title>GEO Consulting for B2B Brands · Jean Paul Serrado</title>
+  <title>[BRAND_NAME] · GEO Consulting for B2B Brands</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -640,8 +640,49 @@
       transition: color .15s ease;
     }
     footer a:hover { color: var(--accent); }
-    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
     .footer-brand { color: var(--text-200); font-weight: 600; }
+    .footer-link-quiet { color: var(--text-600); font-size: 12px; opacity: 0.7; }
+    .footer-link-quiet:hover { opacity: 1; }
+
+    /* ─── Who Runs It (small bio block) ─── */
+    .who-runs {
+      padding: 56px 0 48px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .who-runs-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 760px;
+    }
+    @media (min-width: 720px) {
+      .who-runs-inner {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 32px;
+      }
+    }
+    .who-runs-label {
+      flex-shrink: 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-500);
+      padding-top: 4px;
+      min-width: 120px;
+    }
+    .who-runs p {
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text-300);
+      margin: 0;
+    }
+    .who-runs strong { font-weight: 600; }
+    .who-runs .brand-name { color: var(--text-100); }
+    .who-runs .op-name { color: var(--text-100); }
   </style>
 </head>
 <body>
@@ -649,10 +690,10 @@
   <header class="site-header">
     <div class="header-inner">
       <a href="#top" class="brand">
-        <div class="brand-mark">J</div>
+        <div class="brand-mark">[BRAND_INITIAL]</div>
         <div class="brand-text">
-          <strong>Jean Paul Serrado</strong>
-          <span class="role">GEO Consulting</span>
+          <strong>[BRAND_NAME]</strong>
+          <span class="role">Generative Engine Optimization</span>
         </div>
       </a>
       <a href="https://calendly.com/jeanpaulserrado/geo-audit" class="header-cta" target="_blank" rel="noreferrer">
@@ -673,7 +714,7 @@
         Get cited by <span class="em">AI</span> when your buyers go looking.
       </h1>
       <p class="subhead">
-        Generative Engine Optimization for B2B brands. I help you show up when buyers ask <span class="hl">ChatGPT, Claude, Gemini, and Perplexity</span> for recommendations in your category.
+        Generative Engine Optimization for B2B brands. We help you show up when buyers ask <span class="hl">ChatGPT, Claude, Gemini, and Perplexity</span> for recommendations in your category.
       </p>
       <div class="actions">
         <a class="btn btn-primary" href="https://calendly.com/jeanpaulserrado/geo-audit" target="_blank" rel="noreferrer">
@@ -780,10 +821,10 @@
       <div class="section-label">How I do it</div>
       <h2>A two-layer system most consultants don't run.</h2>
       <p>
-        I combine <span class="hl">platform-level tracking</span> via Peec AI for organic visibility across engines, with a <span class="hl">custom citation-audit tool</span> I built using Claude Cowork that runs API-driven, per-article testing across the major AI engines.
+        We combine <span class="hl">platform-level tracking</span> via Peec AI for organic visibility across engines, with a <span class="hl">custom citation-audit tool</span> we built using Claude Cowork that runs API-driven, per-article testing across the major AI engines.
       </p>
       <p>
-        Most consultants stop at dashboards. I build the diagnostic layer underneath, which is what tells you why a piece of content gets cited or doesn't.
+        Most consultants stop at dashboards. We build the diagnostic layer underneath, which is what tells you why a piece of content gets cited or doesn't.
       </p>
 
       <div class="method-grid">
@@ -801,26 +842,11 @@
     </div>
   </section>
 
-  <!-- ═══════ ABOUT ═══════ -->
-  <section class="about">
-    <div class="container">
-      <div class="section-label">Who you'd be working with</div>
-      <h2>One operator. End-to-end accountability.</h2>
-      <p>
-        I'm Jean Paul (Kosiuko), a GEO specialist and content producer. I've run GEO programs for B2B brands in industrial and media verticals, built custom citation-tracking tooling, and produce the structured content that AI engines actually surface. Bilingual EN/ES.
-      </p>
-      <a href="https://portfolio-59f5b.web.app" target="_blank" rel="noreferrer" class="portfolio-link">
-        View the full portfolio
-        <span>↗</span>
-      </a>
-    </div>
-  </section>
-
   <!-- ═══════ FINAL CTA ═══════ -->
   <section class="final-cta">
     <h2>See where <span class="em">you</span> stand.</h2>
     <p>
-      Most B2B brands have never measured their AI search visibility. Book a 20-minute call and I'll walk you through what's actually happening with yours.
+      Most B2B brands have never measured their AI search visibility. Book a 20-minute call and we'll walk you through what's actually happening with yours.
     </p>
     <a class="btn btn-primary" href="https://calendly.com/jeanpaulserrado/geo-audit" target="_blank" rel="noreferrer">
       Book a 20-min call
@@ -828,16 +854,28 @@
     </a>
   </section>
 
+  <!-- ═══════ WHO RUNS IT (small bio block near footer) ═══════ -->
+  <section class="who-runs">
+    <div class="container">
+      <div class="who-runs-inner">
+        <div class="who-runs-label">Who runs it</div>
+        <p>
+          <strong class="brand-name">[BRAND_NAME]</strong> is run by <strong class="op-name">Jean Paul Serrado</strong>, a GEO specialist who has run programs for B2B brands across industrial and media verticals, built custom citation-tracking tooling, and produces the structured content AI engines surface. Bilingual EN/ES.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- ═══════ FOOTER ═══════ -->
   <footer>
     <div class="footer-inner">
       <div>
-        <span class="footer-brand">Jean Paul Serrado</span> · Generative Engine Optimization for B2B brands
+        <span class="footer-brand">[BRAND_NAME]</span> · Generative Engine Optimization for B2B brands
       </div>
       <div class="footer-links">
         <a href="https://calendly.com/jeanpaulserrado/geo-audit" target="_blank" rel="noreferrer">Book a call</a>
-        <a href="https://portfolio-59f5b.web.app" target="_blank" rel="noreferrer">Portfolio</a>
         <a href="mailto:jeanpaulserrado@gmail.com">jeanpaulserrado@gmail.com</a>
+        <a href="https://portfolio-59f5b.web.app" target="_blank" rel="noreferrer" class="footer-link-quiet">Portfolio</a>
       </div>
     </div>
   </footer>
