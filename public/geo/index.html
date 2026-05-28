@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="Generative Engine Optimization for B2B brands. Get cited by ChatGPT, Claude, Gemini, and Perplexity when your buyers go looking." />
+  <meta property="og:title" content="Get cited by AI when your buyers go looking" />
+  <meta property="og:description" content="Generative Engine Optimization for B2B brands." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>GEO Consulting for B2B Brands · Jean Paul Serrado</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-2: #1a1a1a;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.15);
+      --text-100: #fafafa;
+      --text-200: #e5e5e5;
+      --text-300: #a3a3a3;
+      --text-400: #737373;
+      --text-500: #525252;
+      --text-600: #404040;
+      --accent: #d4ff00;
+      --accent-soft: rgba(212, 255, 0, 0.08);
+      --accent-border: rgba(212, 255, 0, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-100);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    button, input, textarea { font-family: inherit; }
+    ::selection { background: var(--accent); color: var(--bg); }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-feature-settings: 'tnum';
+    }
+    .serif-italic {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* ─── Layout ─── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 88px 0; }
+    @media (max-width: 768px) { section { padding: 56px 0; } }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-500);
+      margin-bottom: 28px;
+    }
+    .section-label::before {
+      content: '';
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .eyebrow-accent {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    /* ─── Header ─── */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10, 10, 10, 0.78);
+      backdrop-filter: saturate(160%) blur(14px);
+      -webkit-backdrop-filter: saturate(160%) blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--accent);
+      color: var(--bg);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1;
+    }
+    .brand-text .role {
+      display: block;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-500);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+    @media (max-width: 420px) {
+      .brand-text { display: none; }
+    }
+
+    .header-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border: 1px solid var(--border-strong);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+    }
+    .header-cta:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .btn-primary:hover { background: var(--text-100); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-100);
+      border-color: var(--border-strong);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--text-400);
+    }
+    .arrow { transition: transform .18s ease; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    /* ─── Hero ─── */
+    .hero { padding-top: 84px; padding-bottom: 104px; }
+    @media (max-width: 768px) { .hero { padding: 56px 0 72px; } }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      border: 1px solid var(--accent-border);
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 36px;
+    }
+    .pulse-dot {
+      position: relative;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor;
+    }
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: currentColor;
+      animation: pulse 2s ease-out infinite;
+    }
+    @keyframes pulse {
+      0%   { transform: scale(1);   opacity: 0.65; }
+      100% { transform: scale(3);   opacity: 0;    }
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 6.8vw, 76px);
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      font-weight: 800;
+      margin-bottom: 28px;
+      max-width: 980px;
+    }
+    .hero h1 .em {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+    .hero .subhead {
+      font-size: clamp(17px, 1.7vw, 21px);
+      line-height: 1.55;
+      color: var(--text-300);
+      max-width: 720px;
+      margin-bottom: 40px;
+    }
+    .hero .subhead .hl { color: var(--text-100); }
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ─── Problem ─── */
+    .problem {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .problem h2 {
+      font-size: clamp(28px, 4.4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+    .problem p {
+      font-size: 17.5px;
+      line-height: 1.65;
+      color: var(--text-300);
+      max-width: 720px;
+    }
+    .problem p .hl { color: var(--text-100); }
+
+    /* ─── Proof / Stats ─── */
+    .proof h2 {
+      font-size: clamp(28px, 4.4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .proof .lede {
+      font-size: 16px;
+      color: var(--text-400);
+      margin-bottom: 36px;
+      max-width: 600px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    @media (min-width: 900px) {
+      .stats { grid-template-columns: repeat(4, 1fr); }
+    }
+    .stat {
+      background: var(--bg);
+      padding: 36px 28px;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .stat-value {
+      font-size: clamp(36px, 4.4vw, 58px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1;
+      color: var(--accent);
+      font-feature-settings: 'tnum';
+      margin-bottom: 20px;
+      word-spacing: -0.05em;
+    }
+    .stat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-300);
+      line-height: 1.5;
+    }
+
+    .proof-note {
+      margin-top: 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-500);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      border-left: 2px solid var(--accent);
+      padding-left: 14px;
+      line-height: 1.6;
+    }
+
+    /* ─── Offer / Pricing ─── */
+    .offer {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, var(--bg), rgba(212, 255, 0, 0.025), var(--bg));
+    }
+    .offer h2 {
+      font-size: clamp(28px, 4.4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .offer .lede {
+      font-size: 16px;
+      color: var(--text-400);
+      margin-bottom: 40px;
+      max-width: 640px;
+    }
+
+    .pricing {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media (min-width: 880px) {
+      .pricing { grid-template-columns: 1fr 1fr; gap: 20px; }
+    }
+
+    .plan {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 32px;
+      transition: border-color .2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .plan:hover { border-color: var(--border-strong); }
+    .plan.featured {
+      background: linear-gradient(170deg, rgba(212, 255, 0, 0.05), var(--surface) 60%);
+      border-color: var(--accent-border);
+    }
+    .popular {
+      position: absolute;
+      top: -11px;
+      right: 26px;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+    .plan-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-500);
+      margin-bottom: 14px;
+    }
+    .plan-title {
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .plan-price {
+      font-size: 44px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1;
+      margin-bottom: 8px;
+      font-feature-settings: 'tnum';
+    }
+    .plan-price .cur {
+      color: var(--text-500);
+      font-size: 24px;
+      vertical-align: top;
+      margin-right: 4px;
+      font-weight: 600;
+    }
+    .plan-turn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      color: var(--text-500);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 28px;
+    }
+    .plan ul {
+      list-style: none;
+      flex: 1;
+      margin-bottom: 28px;
+    }
+    .plan li {
+      position: relative;
+      padding: 12px 0 12px 28px;
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--text-200);
+      border-bottom: 1px solid var(--border);
+    }
+    .plan li:last-child { border-bottom: 0; }
+    .plan li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 18px;
+      width: 14px;
+      height: 14px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="none" stroke="%23d4ff00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 7 6 10 11 4"/></svg>') center/contain no-repeat;
+    }
+
+    .plan-btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background-color .18s ease, color .18s ease, border-color .18s ease;
+      border: 1px solid transparent;
+    }
+    .plan:not(.featured) .plan-btn {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-100);
+      border-color: var(--border-strong);
+    }
+    .plan:not(.featured) .plan-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--text-400);
+    }
+    .plan.featured .plan-btn {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .plan.featured .plan-btn:hover { background: var(--text-100); }
+
+    .offer-footnote {
+      margin-top: 32px;
+      font-size: 13px;
+      color: var(--text-500);
+      text-align: center;
+    }
+
+    /* ─── Methodology ─── */
+    .method h2 {
+      font-size: clamp(28px, 4.4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+    .method p {
+      font-size: 17.5px;
+      line-height: 1.65;
+      color: var(--text-300);
+      max-width: 760px;
+      margin-bottom: 14px;
+    }
+    .method p .hl { color: var(--text-100); font-weight: 500; }
+
+    .method-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-top: 36px;
+      overflow: hidden;
+    }
+    @media (min-width: 700px) {
+      .method-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .method-card {
+      background: var(--bg);
+      padding: 28px;
+    }
+    .method-card .tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 14px;
+    }
+    .method-card h4 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      margin-bottom: 8px;
+      color: var(--text-100);
+    }
+    .method-card p {
+      font-size: 14.5px;
+      color: var(--text-300);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* ─── About ─── */
+    .about {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .about h2 {
+      font-size: clamp(28px, 4.4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      font-weight: 800;
+      margin-bottom: 24px;
+    }
+    .about p {
+      font-size: 17.5px;
+      line-height: 1.65;
+      color: var(--text-300);
+      max-width: 700px;
+      margin-bottom: 24px;
+    }
+    .portfolio-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      padding: 10px 16px;
+      border: 1px solid var(--accent-border);
+      border-radius: 999px;
+      transition: background-color .18s ease, color .18s ease;
+    }
+    .portfolio-link:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
+
+    /* ─── Final CTA ─── */
+    .final-cta {
+      padding: 120px 24px;
+      text-align: center;
+    }
+    @media (max-width: 768px) { .final-cta { padding: 72px 24px; } }
+    .final-cta h2 {
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      font-weight: 800;
+      max-width: 820px;
+      margin: 0 auto 24px;
+    }
+    .final-cta h2 .em {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--accent);
+    }
+    .final-cta p {
+      font-size: 18px;
+      color: var(--text-300);
+      max-width: 620px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 0;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--text-500);
+    }
+    footer a {
+      color: var(--text-300);
+      transition: color .15s ease;
+    }
+    footer a:hover { color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-brand { color: var(--text-200); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#top" class="brand">
+        <div class="brand-mark">J</div>
+        <div class="brand-text">
+          <strong>Jean Paul Serrado</strong>
+          <span class="role">GEO Consulting</span>
+        </div>
+      </a>
+      <a href="[CALENDLY_LINK_PLACEHOLDER]" class="header-cta" target="_blank" rel="noreferrer">
+        Book a call
+        <span class="arrow">→</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- ═══════ HERO ═══════ -->
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        Generative Engine Optimization
+      </div>
+      <h1>
+        Get cited by <span class="em">AI</span> when your buyers go looking.
+      </h1>
+      <p class="subhead">
+        Generative Engine Optimization for B2B brands. I help you show up when buyers ask <span class="hl">ChatGPT, Claude, Gemini, and Perplexity</span> for recommendations in your category.
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="[CALENDLY_LINK_PLACEHOLDER]" target="_blank" rel="noreferrer">
+          Book a 20-min call
+          <span class="arrow">→</span>
+        </a>
+        <a class="btn btn-secondary" href="#offer">See the offer</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ PROBLEM ═══════ -->
+  <section class="problem">
+    <div class="container">
+      <div class="section-label">The problem</div>
+      <h2>Your buyers have changed how they search.</h2>
+      <p>
+        B2B buyers increasingly start their research inside AI tools, not Google. When they ask "best [category] for [use case]," AI returns a specific shortlist. <span class="hl">Most B2B brands aren't on it.</span> They're invisible to a fast-growing share of the buying journey, and they haven't measured it.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════ PROOF ═══════ -->
+  <section class="proof">
+    <div class="container">
+      <div class="section-label">Real results</div>
+      <h2>Numbers from an actual program.</h2>
+      <p class="lede">Pulled from a live engagement. Same approach you'd get.</p>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">6 → 29</div>
+          <div class="stat-label">Visible AI prompts<br/>(of 50 tracked)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">#2.9 → #1.4</div>
+          <div class="stat-label">Average citation position</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">1.7</div>
+          <div class="stat-label">Citation rate. Highest of any source domain except Wikipedia.</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">#1</div>
+          <div class="stat-label">Share of voice in vertical</div>
+        </div>
+      </div>
+
+      <p class="proof-note">
+        Results from a 10-week GEO program for a B2B media platform reaching 300K+ professionals.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════ OFFER ═══════ -->
+  <section class="offer" id="offer">
+    <div class="container">
+      <div class="section-label">The offer</div>
+      <h2>The GEO Baseline Audit.</h2>
+      <p class="lede">Two ways to start. Both deliver a multi-engine visibility report you can act on.</p>
+
+      <div class="pricing">
+
+        <div class="plan">
+          <div class="plan-name">Starter</div>
+          <div class="plan-title">GEO Visibility Snapshot</div>
+          <div class="plan-price"><span class="cur">$</span>750</div>
+          <div class="plan-turn">1 week turnaround</div>
+          <ul>
+            <li>Multi-platform AI visibility check across ChatGPT, Claude, Gemini, and Perplexity</li>
+            <li>Citation analysis across 20 buyer-intent prompts</li>
+            <li>Competitive landscape. Who AI cites instead of you</li>
+            <li>Top 3 priority recommendations</li>
+          </ul>
+          <a href="[CALENDLY_LINK_PLACEHOLDER]" target="_blank" rel="noreferrer" class="plan-btn">Book a call</a>
+        </div>
+
+        <div class="plan featured">
+          <div class="popular">Most popular</div>
+          <div class="plan-name">Full Audit</div>
+          <div class="plan-title">GEO Baseline Audit</div>
+          <div class="plan-price"><span class="cur">$</span>1,500</div>
+          <div class="plan-turn">2 week turnaround</div>
+          <ul>
+            <li>Everything in Starter, plus:</li>
+            <li>Full audit across 30 to 50 buyer-intent prompts</li>
+            <li>Off-site authority gap analysis. LinkedIn, Reddit, Wikipedia, and industry roundups</li>
+            <li>Content gap analysis with prioritized opportunities</li>
+            <li>Schema and structured data recommendations</li>
+            <li>90-day action roadmap</li>
+          </ul>
+          <a href="[CALENDLY_LINK_PLACEHOLDER]" target="_blank" rel="noreferrer" class="plan-btn">Book a call</a>
+        </div>
+
+      </div>
+
+      <p class="offer-footnote">Both audits are delivered as a clean, redactable PDF report plus a 60-minute walkthrough call.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ METHODOLOGY ═══════ -->
+  <section class="method">
+    <div class="container">
+      <div class="section-label">How I do it</div>
+      <h2>A two-layer system most consultants don't run.</h2>
+      <p>
+        I combine <span class="hl">platform-level tracking</span> via Peec AI for organic visibility across engines, with a <span class="hl">custom citation-audit tool</span> I built using Claude Cowork that runs API-driven, per-article testing across the major AI engines.
+      </p>
+      <p>
+        Most consultants stop at dashboards. I build the diagnostic layer underneath, which is what tells you why a piece of content gets cited or doesn't.
+      </p>
+
+      <div class="method-grid">
+        <div class="method-card">
+          <span class="tag">Layer 1 · Tracking</span>
+          <h4>Peec AI macro visibility</h4>
+          <p>Tracking across 50 buyer-intent prompts. ChatGPT, Claude, Gemini, Perplexity, and Google AI Overview measured weekly with competitor benchmarks.</p>
+        </div>
+        <div class="method-card">
+          <span class="tag">Layer 2 · Diagnostic</span>
+          <h4>Custom Claude Cowork audit</h4>
+          <p>API-driven citation tests scoring individual articles on broad, mid-specific, and highly-specific prompts. Per-article scorecards with combined performance score.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ ABOUT ═══════ -->
+  <section class="about">
+    <div class="container">
+      <div class="section-label">Who you'd be working with</div>
+      <h2>One operator. End-to-end accountability.</h2>
+      <p>
+        I'm Jean Paul (Kosiuko), a GEO specialist and content producer. I've run GEO programs for B2B brands in industrial and media verticals, built custom citation-tracking tooling, and produce the structured content that AI engines actually surface. Bilingual EN/ES.
+      </p>
+      <a href="https://portfolio-59f5b.web.app" target="_blank" rel="noreferrer" class="portfolio-link">
+        View the full portfolio
+        <span>↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════ FINAL CTA ═══════ -->
+  <section class="final-cta">
+    <h2>See where <span class="em">you</span> stand.</h2>
+    <p>
+      Most B2B brands have never measured their AI search visibility. Book a 20-minute call and I'll walk you through what's actually happening with yours.
+    </p>
+    <a class="btn btn-primary" href="[CALENDLY_LINK_PLACEHOLDER]" target="_blank" rel="noreferrer">
+      Book a 20-min call
+      <span class="arrow">→</span>
+    </a>
+  </section>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <span class="footer-brand">Jean Paul Serrado</span> · Generative Engine Optimization for B2B brands
+      </div>
+      <div class="footer-links">
+        <a href="[CALENDLY_LINK_PLACEHOLDER]" target="_blank" rel="noreferrer">Book a call</a>
+        <a href="https://portfolio-59f5b.web.app" target="_blank" rel="noreferrer">Portfolio</a>
+        <a href="mailto:[EMAIL_PLACEHOLDER]">[EMAIL_PLACEHOLDER]</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
