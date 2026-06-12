@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local & Social — Instagram Content for Bali Brands | Jean Paul Serrado</title>
+<meta name="description" content="Instagram content systems for cafés, gyms, fashion labels and villas in Bali. Concept work by Jean Paul Serrado.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505; --surface:#0d0d0d; --surface2:#121212;
+  --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
+  --text:#fff; --muted:rgba(255,255,255,.55); --faint:rgba(255,255,255,.35);
+  --lime:#d4ff00; --lime10:rgba(212,255,0,.1); --lime30:rgba(212,255,0,.3); --lime40:rgba(212,255,0,.4);
+  --sans:'Inter',sans-serif; --mono:'JetBrains Mono',monospace; --serif:'Instrument Serif',Georgia,serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.18em;font-size:11px}
+.serif-i{font-family:var(--serif);font-style:italic;font-weight:400}
+
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(5,5,5,.92);backdrop-filter:blur(8px);z-index:50}
+.brandline{display:flex;align-items:center;gap:12px}
+.avatar{width:34px;height:34px;border-radius:8px;background:var(--lime);color:#050505;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
+.brandline h1{font-size:14px;font-weight:600;line-height:1.2}
+.brandline .mono{color:var(--faint);font-size:9px}
+.backlink{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);border:1px solid var(--border2);padding:9px 16px;border-radius:6px;transition:.2s}
+.backlink:hover{color:var(--lime);border-color:var(--lime40)}
+
+/* hero */
+.hero{padding:90px 0 60px}
+.kicker{display:flex;align-items:center;gap:14px;color:var(--faint);margin-bottom:28px}
+.kicker .line{width:54px;height:1px;background:rgba(255,255,255,.2)}
+.tagchip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);background:var(--lime10);border:1px solid var(--lime30);padding:7px 14px;border-radius:6px;margin-bottom:26px}
+.hero h2{font-size:clamp(44px,7.2vw,96px);font-weight:900;letter-spacing:-.03em;line-height:1.02}
+.hero h2 .serif-i{color:var(--lime);font-weight:400}
+.hero .strap{border-left:2px solid var(--lime);padding-left:14px;margin:30px 0 26px;color:var(--muted);font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.hero p.lede{max-width:640px;color:rgba(255,255,255,.78);font-size:18px}
+.hero p.lede strong{color:#fff}
+.chiprow{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border2);color:var(--muted);padding:7px 13px;border-radius:5px}
+.chip.hot{background:var(--lime);color:#050505;border-color:var(--lime);font-weight:700}
+
+/* disclaimer */
+.notice{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin:46px 0 0;color:var(--muted);font-size:13px;max-width:720px}
+.notice b{color:var(--lime);font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+
+/* section heads */
+section{padding:70px 0}
+.shead{display:flex;align-items:center;gap:14px;color:var(--faint);margin-bottom:34px}
+.shead .num{font-family:var(--mono);font-size:11px;letter-spacing:.18em}
+.shead .line{flex:0 0 64px;height:1px;background:rgba(255,255,255,.2)}
+.shead .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+
+/* tabs */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:36px}
+.tab{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;text-align:left;transition:.2s;font-family:var(--sans)}
+.tab:hover{border-color:var(--border2)}
+.tab .t-ico{font-size:18px;display:block;margin-bottom:8px}
+.tab .t-name{font-weight:700;font-size:14px;color:#fff;display:block}
+.tab .t-cat{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.tab.active{border-color:var(--lime40);background:var(--lime10)}
+.tab.active .t-cat{color:var(--lime)}
+
+/* brand panel */
+.panel{display:none;animation:fade .35s ease}
+.panel.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.brand-head{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-bottom:8px}
+.logo-mark{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;letter-spacing:-.02em}
+.brand-head h3{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.brand-head .handle{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em}
+.brand-pos{color:var(--muted);max-width:680px;margin-bottom:30px;font-size:15px}
+.brand-pos em{color:#fff;font-style:normal;font-weight:600}
+
+.panel-grid{display:grid;grid-template-columns:390px 1fr;gap:34px;align-items:start}
+
+/* phone / ig grid */
+.phone{background:var(--surface);border:1px solid var(--border2);border-radius:22px;padding:16px;position:sticky;top:96px}
+.ig-top{display:flex;align-items:center;gap:12px;padding:4px 4px 14px}
+.ig-pfp{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;border:2px solid var(--lime)}
+.ig-meta{flex:1}
+.ig-meta .u{font-weight:700;font-size:13px}
+.ig-meta .b{font-size:11px;color:var(--muted);line-height:1.45}
+.ig-stats{display:flex;gap:14px;padding:0 4px 14px;border-bottom:1px solid var(--border)}
+.ig-stats div{font-size:11px;color:var(--muted)}
+.ig-stats b{color:#fff;font-size:13px;display:block}
+.grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:14px;border-radius:10px;overflow:hidden}
+.tile{aspect-ratio:1;position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:9px;overflow:hidden}
+.tile .tt{font-size:9.5px;font-weight:700;line-height:1.25;letter-spacing:.01em}
+.tile .tk{font-family:var(--mono);font-size:7px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;margin-bottom:3px}
+.tile .play{position:absolute;top:7px;right:7px;width:16px;height:16px;border-radius:50%;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.tile .play:after{content:'';border-left:6px solid #fff;border-top:4px solid transparent;border-bottom:4px solid transparent;margin-left:2px}
+.tile.txt{justify-content:center;align-items:center;text-align:center;padding:10px}
+.tile.txt .q{font-family:var(--serif);font-style:italic;font-size:13px;line-height:1.25}
+.phone .cap{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);text-align:center;margin-top:12px}
+
+/* right column cards */
+.cards{display:flex;flex-direction:column;gap:18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px}
+.card h4{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--lime);margin-bottom:16px;font-weight:500}
+.pillars{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pillar{border:1px solid var(--border);border-radius:8px;padding:12px 14px;background:var(--surface2)}
+.pillar b{font-size:13px;display:block;margin-bottom:3px}
+.pillar span{font-size:12px;color:var(--muted);line-height:1.45;display:block}
+.pillar .pct{font-family:var(--mono);font-size:9px;color:var(--lime);letter-spacing:.12em}
+.caption{border-left:2px solid var(--lime30);padding:2px 0 2px 14px;margin-bottom:14px}
+.caption:last-child{margin-bottom:0}
+.caption .ctx{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:5px}
+.caption p{font-size:13.5px;color:rgba(255,255,255,.85)}
+.caption .tags{font-size:11.5px;color:var(--lime);opacity:.8;margin-top:5px;font-family:var(--mono)}
+.reel{display:grid;grid-template-columns:90px 1fr;gap:14px;padding:13px 0;border-bottom:1px solid var(--border)}
+.reel:last-child{border-bottom:0;padding-bottom:0}
+.reel:first-of-type{padding-top:0}
+.reel .rl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);padding-top:2px}
+.reel b{font-size:13.5px;display:block;margin-bottom:3px}
+.reel span{font-size:12.5px;color:var(--muted);display:block;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kpi{border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--surface2);text-align:center}
+.kpi b{font-size:22px;font-weight:800;display:block;letter-spacing:-.02em}
+.kpi span{font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+
+/* photo tiles */
+.tile .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.tile .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08) 32%,rgba(0,0,0,.8));z-index:1}
+.tile .tk,.tile .tt{position:relative;z-index:2}
+.tile .play{z-index:2}
+
+/* reel covers */
+.reelrow{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rcover{position:relative;aspect-ratio:9/16;border-radius:14px;overflow:hidden;border:1px solid var(--border2);background:#000}
+.rcover .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.94}
+.rcover .grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.4),transparent 28%,transparent 52%,rgba(0,0,0,.88))}
+.rcover .rb{position:absolute;top:10px;left:10px;font-family:var(--mono);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);padding:4px 8px;border-radius:4px;color:#fff;z-index:2}
+.rcover .rplay{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;z-index:2}
+.rcover .rplay:after{content:'';border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:3px}
+.rcover .rtxt{position:absolute;left:12px;right:12px;bottom:12px;z-index:2}
+.rcover .rtxt b{font-size:13px;line-height:1.3;display:block;color:#fff}
+.rcover .rtxt span{font-family:var(--mono);font-size:8.5px;color:rgba(255,255,255,.7);letter-spacing:.12em;text-transform:uppercase;display:block;margin-top:6px}
+/* tap-to-preview playback */
+.rcover{cursor:pointer}
+.rcover .ph{transform-origin:center;transition:transform .5s ease}
+.rcover.playing .ph{animation:kburns 16s ease-in-out infinite alternate}
+@keyframes kburns{from{transform:scale(1)}to{transform:scale(1.22) translate(2.5%,-3%)}}
+.rcover .rplay{transition:opacity .35s,transform .35s}
+.rcover.playing .rplay{opacity:0;transform:translate(-50%,-50%) scale(1.3)}
+.rcover .pbar{position:absolute;top:0;left:0;height:3px;background:var(--lime);width:0;z-index:3;opacity:0;border-radius:0 2px 2px 0}
+.rcover.playing .pbar{opacity:1;animation:pbar 8s linear infinite}
+@keyframes pbar{from{width:0}to{width:100%}}
+.rcover .hint{position:absolute;top:10px;right:10px;font-family:var(--mono);font-size:7.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.75);padding:4px 8px;border-radius:4px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2);z-index:3;transition:opacity .3s}
+.rcover.playing .hint{opacity:0}
+
+/* promo design cards */
+.promogrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.promo{position:relative;aspect-ratio:4/5;border-radius:14px;overflow:hidden;border:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;padding:20px}
+.promo .ptop,.promo .pbot{position:relative;z-index:2}
+.promo .pbadge{font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;padding:5px 10px;border-radius:4px;display:inline-block;font-weight:700}
+.promo h5{font-size:24px;font-weight:900;letter-spacing:-.02em;line-height:1.08;margin-top:10px}
+.promo h5 .serif-i{font-weight:400}
+.promo .pdet{font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;opacity:.78;line-height:1.9}
+.promo .pcta{display:inline-block;margin-top:12px;font-size:11.5px;font-weight:700;padding:9px 15px;border-radius:6px}
+.promo-note{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:16px}
+
+/* system section */
+.sys{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sys .card{padding:26px}
+.sys .step{font-family:var(--mono);font-size:10px;color:var(--lime);letter-spacing:.18em;margin-bottom:14px;display:block}
+.sys b{font-size:16px;display:block;margin-bottom:8px}
+.sys p{font-size:13.5px;color:var(--muted)}
+
+/* stats band */
+.band{border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr)}
+.band div{padding:34px 26px;border-right:1px solid var(--border)}
+.band div:last-child{border-right:0}
+.band b{font-size:34px;font-weight:800;letter-spacing:-.02em;display:block}
+.band span{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+
+/* cta */
+.cta{padding:90px 0;text-align:left}
+.cta h3{font-size:clamp(34px,5vw,60px);font-weight:900;letter-spacing:-.03em;line-height:1.05;margin-bottom:18px}
+.cta h3 .serif-i{color:var(--lime);font-weight:400}
+.cta p{color:var(--muted);max-width:560px;margin-bottom:34px}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 26px;border-radius:8px;font-weight:600;font-size:15px;transition:.2s}
+.btn.primary{background:var(--lime);color:#050505}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{border:1px solid var(--border2);color:#fff}
+.btn.ghost:hover{border-color:var(--lime40);color:var(--lime)}
+footer{border-top:1px solid var(--border);padding:26px 0;color:var(--faint)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer .mono{font-size:9.5px}
+
+@media(max-width:920px){
+  .panel-grid{grid-template-columns:1fr}
+  .phone{position:static;max-width:420px;margin:0 auto}
+  .tabs{grid-template-columns:repeat(2,1fr)}
+  .sys{grid-template-columns:1fr}
+  .band{grid-template-columns:repeat(2,1fr)}
+  .band div:nth-child(2){border-right:0}
+  .band div:nth-child(-n+2){border-bottom:1px solid var(--border)}
+  .pillars{grid-template-columns:1fr}
+  .promogrid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brandline">
+    <div class="avatar">J</div>
+    <div>
+      <h1>Jean-Paul Serrado</h1>
+      <div class="mono">Social Media · Local Brands</div>
+    </div>
+  </div>
+  <a class="backlink" href="https://portfolio-59f5b.web.app/">← Main Portfolio</a>
+</div>
+
+<header class="hero wrap">
+  <div class="kicker"><span class="mono">[ 13 ]</span><span class="line"></span><span class="mono">Local & Social</span></div>
+  <div class="tagchip">⌕ Instagram Content Systems · Bali</div>
+  <h2>Feeds that <span class="serif-i">sell out</span> the room.</h2>
+  <div class="strap">Cafés · Gyms & Studios · Fashion Labels · Villas & Hospitality</div>
+  <p class="lede">Your customers decide from the grid — before they ever walk in. I build <strong>complete Instagram content systems</strong> for local brands: strategy, art direction, reels, captions and posting cadence. Below are four concept builds showing exactly what that looks like per niche.</p>
+  <div class="chiprow">
+    <span class="chip hot">IG Content Systems</span>
+    <span class="chip">Reels & Short-Form</span>
+    <span class="chip">Art Direction</span>
+    <span class="chip">Caption Writing EN/ES</span>
+    <span class="chip">Promo & Offer Design</span>
+    <span class="chip">Content Calendars</span>
+    <span class="chip">AI-Accelerated Production</span>
+  </div>
+  <div class="notice"><b>Concept Work</b><span>The four brands below are fictional, created to demonstrate full content systems per niche. Photography is licensed stock used for mockup purposes; strategy, grids, designs, captions and reel scripts are 100% real deliverables — the same system I build for your brand, with your real photos and footage.</span></div>
+</header>
+
+<section class="wrap" id="brands">
+  <div class="shead"><span class="num">[ 01 ]</span><span class="line"></span><span class="lbl">Four Niches · Four Systems</span></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-p="cafe"><span class="t-ico">☕</span><span class="t-name">Tanam Coffee</span><span class="t-cat">Café · Brunch</span></button>
+    <button class="tab" data-p="gym"><span class="t-ico">▲</span><span class="t-name">Bara Strength Club</span><span class="t-cat">Gym · Fitness</span></button>
+    <button class="tab" data-p="fashion"><span class="t-ico">✦</span><span class="t-name">Mara the Label</span><span class="t-cat">Fashion · Resortwear</span></button>
+    <button class="tab" data-p="villa"><span class="t-ico">⌂</span><span class="t-name">Villa Karsa</span><span class="t-cat">Villas · Hospitality</span></button>
+  </div>
+
+  <!-- ══════════ CAFÉ ══════════ -->
+  <div class="panel show" id="p-cafe">
+    <div class="brand-head">
+      <div class="logo-mark" style="background:#f2e8da;color:#3b2a1f">T</div>
+      <div><h3>Tanam Coffee</h3><div class="handle">@tanam.coffee · Specialty café & brunch — Canggu</div></div>
+    </div>
+    <p class="brand-pos">Positioning: <em>the slow-morning café in a fast neighborhood.</em> Feed built around warm light, latte ritual and the people behind the bar — designed so a tourist scrolling "best café Canggu" stops on the third tile.</p>
+    <div class="panel-grid">
+      <div class="phone">
+        <div class="ig-top">
+          <div class="ig-pfp" style="background:#f2e8da;color:#3b2a1f">T</div>
+          <div class="ig-meta"><div class="u">tanam.coffee</div><div class="b">Specialty coffee · brunch till 3pm<br>Jl. Pantai Batu Bolong · 7am–5pm</div></div>
+        </div>
+        <div class="ig-stats"><div><b>214</b>posts</div><div><b>8,4k</b>followers</div><div><b>~6%</b>engagement</div></div>
+        <div class="grid9">
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk">Reel · 0:22</div><div class="tt">The 6am bake, in 22 seconds</div></div>
+          <div class="tile txt" style="background:#f2e8da;color:#3b2a1f"><div class="q">"Mornings are not for rushing."</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">Carousel</div><div class="tt">Meet the farmers behind our Kintamani beans</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">Photo</div><div class="tt">Sourdough, eggs, golden hour</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk">Reel · 0:15</div><div class="tt">Latte art ASMR — no talking</div></div>
+          <div class="tile txt" style="background:#c96f4a;color:#fff"><div class="q">New menu drops Friday ↓</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">Photo</div><div class="tt">Rainy season corner seat</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk">Reel · 0:30</div><div class="tt">POV: your barista remembers your order</div></div>
+          <div class="tile txt" style="background:#f2e8da;color:#3b2a1f"><div class="q">Brunch till 3. Every day.</div></div>
+        </div>
+        <div class="cap">Concept grid · designed in brand palette</div>
+      </div>
+      <div class="cards">
+        <div class="card"><h4>Content Pillars</h4>
+          <div class="pillars">
+            <div class="pillar"><span class="pct">40%</span><b>Craft & Product</b><span>Pours, plating, bakes — sensory close-ups that make people taste the feed.</span></div>
+            <div class="pillar"><span class="pct">25%</span><b>People & Place</b><span>Baristas, regulars, the room. Community is the retention engine.</span></div>
+            <div class="pillar"><span class="pct">20%</span><b>Menu & Offers</b><span>New items, brunch hours, seasonal specials — clear, designed, branded.</span></div>
+            <div class="pillar"><span class="pct">15%</span><b>Bali Context</b><span>Neighborhood guides, rainy-day content, "where locals actually go".</span></div>
+          </div>
+        </div>
+        <div class="card"><h4>Sample Captions</h4>
+          <div class="caption"><span class="ctx">Reel · The 6am bake</span><p>The croissants you fight over at 9am? They started at 6. Here's the part you never see. 🥐 Doors open 7am — come early, they don't last.</p><div class="tags">#canggucafe #balicoffee #specialtycoffeebali</div></div>
+          <div class="caption"><span class="ctx">Carousel · Farmer story</span><p>Every cup of our Kintamani filter starts 1,500m up the mountain. Swipe to meet Pak Wayan — three generations of coffee on the same land. This is why we don't do "just coffee".</p><div class="tags">#kintamanicoffee #farmtocup #balicoffeeculture</div></div>
+          <div class="caption"><span class="ctx">Photo · Offer post</span><p>Brunch till 3pm means breakfast is a state of mind, not a deadline. Burrata toast + iced long black = the Canggu reset. Tag who needs this today.</p><div class="tags">#brunchbali #cangguopennow</div></div>
+        </div>
+        <div class="card"><h4>Reel Concepts</h4>
+          <div class="reel"><span class="rl">Hook-led</span><div><b>"Cafés in Canggu are all the same. Except…"</b><span>Fast cuts of what's different: the bake, the farmers, the corner seat. CTA: save for your next morning.</span></div></div>
+          <div class="reel"><span class="rl">ASMR</span><div><b>Latte art, no talking, no music intro</b><span>Pure sound: steam, pour, cup on saucer. Loops cleanly — built for replays, the strongest ranking signal.</span></div></div>
+          <div class="reel"><span class="rl">POV</span><div><b>POV: the barista remembers your order</b><span>Relatable regular-customer moment, 15s. Comment bait: "tag your café where they know your name."</span></div></div>
+        </div>
+        <div class="card"><h4>Reel Covers · 9:16</h4>
+          <div class="reelrow">
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:22</div><div class="rplay"></div><div class="rtxt"><b>The croissants you fight over started at 6am</b><span>▶ 18.2K · 412 saves</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:15</div><div class="rplay"></div><div class="rtxt"><b>The room at 9am — sound on</b><span>▶ 9.7K · 230 shares</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:20</div><div class="rplay"></div><div class="rtxt"><b>Menu drop: first look before Friday</b><span>▶ 14.1K · 388 saves</span></div></div>
+          </div>
+        </div>
+        <div class="card"><h4>90-Day Targets (Projected)</h4>
+          <div class="kpis"><div class="kpi"><b>4×</b><span>weekly posts</span></div><div class="kpi"><b>+45%</b><span>reach / month</span></div><div class="kpi"><b>2×</b><span>profile → maps taps</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ GYM ══════════ -->
+  <div class="panel" id="p-gym">
+    <div class="brand-head">
+      <div class="logo-mark" style="background:#ff4d2e;color:#0a0a0a">B</div>
+      <div><h3>Bara Strength Club</h3><div class="handle">@bara.strength · Strength & conditioning gym — Berawa</div></div>
+    </div>
+    <p class="brand-pos">Positioning: <em>train hard, no circus.</em> Feed engineered for two audiences at once — travelers searching "gym near me Berawa" who need drop-in info fast, and long-stay members who want to belong to something serious.</p>
+    <div class="panel-grid">
+      <div class="phone">
+        <div class="ig-top">
+          <div class="ig-pfp" style="background:#ff4d2e;color:#0a0a0a">B</div>
+          <div class="ig-meta"><div class="u">bara.strength</div><div class="b">Strength & conditioning · Berawa<br>Drop-ins welcome · Classes 6am–8pm</div></div>
+        </div>
+        <div class="ig-stats"><div><b>186</b>posts</div><div><b>12,1k</b>followers</div><div><b>~7%</b>engagement</div></div>
+        <div class="grid9">
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk" style="color:#ff4d2e">Reel · 0:30</div><div class="tt">6am class. Zero excuses. Full room.</div></div>
+          <div class="tile txt" style="background:#ff4d2e;color:#0a0a0a"><div class="q" style="font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.1em">DROP-IN<br>150K IDR<br>ALL CLASSES</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk" style="color:#ff4d2e">Member story</div><div class="tt">Sasha: nomad → 12-month member</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk" style="color:#ff4d2e">Reel · 0:18</div><div class="tt">Fix your deadlift in 3 cues</div></div>
+          <div class="tile txt" style="background:#111;color:#fff;border:1px solid #ff4d2e"><div class="q">"Strong is a skill."</div></div>
+          <div class="tile" style="background:linear-gradient(160deg,#ff4d2e,#b32f17)"><div class="tk" style="color:#0a0a0a">Schedule</div><div class="tt" style="color:#0a0a0a">This week's classes ↓ saved?</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk" style="color:#ff4d2e">Reel · 0:25</div><div class="tt">What 150K gets you (full tour)</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk" style="color:#ff4d2e">Photo</div><div class="tt">Chalk, steel, sunrise</div></div>
+          <div class="tile txt" style="background:#0a0a0a;color:#ff4d2e;border:1px solid rgba(255,77,46,.4)"><div class="q" style="font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.12em">NEW: OPEN GYM<br>SAT 7–11AM</div></div>
+        </div>
+        <div class="cap">Concept grid · designed in brand palette</div>
+      </div>
+      <div class="cards">
+        <div class="card"><h4>Content Pillars</h4>
+          <div class="pillars">
+            <div class="pillar"><span class="pct">35%</span><b>Training Proof</b><span>Real classes, real effort. The room sells itself when it looks alive.</span></div>
+            <div class="pillar"><span class="pct">25%</span><b>Coaching Value</b><span>Technique fixes and programming tips — saves & shares machine.</span></div>
+            <div class="pillar"><span class="pct">25%</span><b>Drop-in Funnel</b><span>Pricing, schedule, tour reels. Tourists decide in 30 seconds — answer fast.</span></div>
+            <div class="pillar"><span class="pct">15%</span><b>Member Stories</b><span>Nomads who stayed. Social proof that converts long-stay leads.</span></div>
+          </div>
+        </div>
+        <div class="card"><h4>Sample Captions</h4>
+          <div class="caption"><span class="ctx">Reel · Full tour</span><p>"How much is a drop-in?" — 150K, and here's exactly what it gets you. Full tour, no filter, no fisheye lens making the room look bigger. Come lift. 📍 Berawa, 2 min from the beach road.</p><div class="tags">#berawagym #baligym #dropinbali</div></div>
+          <div class="caption"><span class="ctx">Reel · Technique</span><p>Your deadlift isn't weak — it's leaking. 3 cues, 18 seconds, instantly heavier pulls. Save this for your next session and tell us which cue hit.</p><div class="tags">#deadlifttips #strengthtraining #gymbali</div></div>
+          <div class="caption"><span class="ctx">Member story</span><p>Sasha came for two weeks. That was 14 months ago. This is what happens when a gym stops being a place you visit and becomes the reason your week has structure.</p><div class="tags">#baligymcommunity #traininbali</div></div>
+        </div>
+        <div class="card"><h4>Reel Concepts</h4>
+          <div class="reel"><span class="rl">Search-intent</span><div><b>"Best gym in Berawa? Watch before you buy a day pass."</b><span>Targets the exact question travelers ask. Tour + price + schedule in 25s. Pinned to profile.</span></div></div>
+          <div class="reel"><span class="rl">Authority</span><div><b>Coach breaks down 1 lift per week</b><span>Recurring series = predictable saves. Builds the "these people know what they're doing" effect.</span></div></div>
+          <div class="reel"><span class="rl">Energy</span><div><b>6am class timelapse → final rep slow-mo</b><span>Contrast edit. Sound-on. The goal isn't info — it's "I want to be in that room."</span></div></div>
+        </div>
+        <div class="card"><h4>Reel Covers · 9:16</h4>
+          <div class="reelrow">
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:30</div><div class="rplay"></div><div class="rtxt"><b>6am. Full room. Zero excuses.</b><span>▶ 31.4K · 1.1K shares</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:18</div><div class="rplay"></div><div class="rtxt"><b>Your deadlift isn't weak — it's leaking</b><span>▶ 22.8K · 960 saves</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:25</div><div class="rplay"></div><div class="rtxt"><b>What 150K actually gets you</b><span>▶ 12.3K · 84 DMs</span></div></div>
+          </div>
+        </div>
+        <div class="card"><h4>90-Day Targets (Projected)</h4>
+          <div class="kpis"><div class="kpi"><b>5×</b><span>weekly posts</span></div><div class="kpi"><b>+60%</b><span>drop-in DMs</span></div><div class="kpi"><b>3×</b><span>reel reach</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ FASHION ══════════ -->
+  <div class="panel" id="p-fashion">
+    <div class="brand-head">
+      <div class="logo-mark" style="background:#e9e2d5;color:#6b6453;font-family:var(--serif);font-style:italic">m</div>
+      <div><h3>Mara the Label</h3><div class="handle">@marathelabel · Resortwear, made in Bali</div></div>
+    </div>
+    <p class="brand-pos">Positioning: <em>quiet luxury for loud sunsets.</em> Editorial feed where the grid itself is the lookbook — campaign rhythm: drop teasers, fabric stories, worn-in-the-wild UGC. Built to convert browsers into boutique visits and DM orders.</p>
+    <div class="panel-grid">
+      <div class="phone">
+        <div class="ig-top">
+          <div class="ig-pfp" style="background:#e9e2d5;color:#6b6453;font-family:var(--serif);font-style:italic">m</div>
+          <div class="ig-meta"><div class="u">marathelabel</div><div class="b">Resortwear · made in Bali<br>Boutique: Jl. Batu Belig · ships worldwide</div></div>
+        </div>
+        <div class="ig-stats"><div><b>342</b>posts</div><div><b>26,7k</b>followers</div><div><b>~4,5%</b>engagement</div></div>
+        <div class="grid9">
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">Campaign</div><div class="tt">Salt Air — the November drop</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk">Reel · 0:20</div><div class="tt">From loom to linen — 20 sec</div></div>
+          <div class="tile txt" style="background:#e9e2d5;color:#4a4334"><div class="q">Salt Air. 11.11.</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">Photo</div><div class="tt">The Asana dress, stairwell edit</div></div>
+          <div class="tile txt" style="background:#3c372b;color:#e9e2d5"><div class="q">"Made slowly, worn forever."</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1495385794356-15371f348c31?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk">Reel · 0:15</div><div class="tt">Styled 3 ways: one sarong</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">UGC</div><div class="tt">Worn in Uluwatu — @guest</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk">Carousel</div><div class="tt">Behind the dye: natural indigo</div></div>
+          <div class="tile txt" style="background:#e9e2d5;color:#4a4334"><div class="q">Boutique open daily, 10–8.</div></div>
+        </div>
+        <div class="cap">Concept grid · designed in brand palette</div>
+      </div>
+      <div class="cards">
+        <div class="card"><h4>Content Pillars</h4>
+          <div class="pillars">
+            <div class="pillar"><span class="pct">35%</span><b>Campaign & Lookbook</b><span>Drops as events: teaser → reveal → sell-through. Grid planned in 9-tile sets.</span></div>
+            <div class="pillar"><span class="pct">25%</span><b>Craft Stories</b><span>Looms, dyes, makers. Justifies the price point without ever saying "premium".</span></div>
+            <div class="pillar"><span class="pct">25%</span><b>Styling & Wear</b><span>"3 ways to wear" reels + UGC from guests. Proof it works off the mannequin.</span></div>
+            <div class="pillar"><span class="pct">15%</span><b>Boutique Life</b><span>The space, fittings, new arrivals — drives foot traffic from Batu Belig.</span></div>
+          </div>
+        </div>
+        <div class="card"><h4>Sample Captions</h4>
+          <div class="caption"><span class="ctx">Campaign teaser</span><p>Salt Air arrives 11.11. Twelve pieces, one palette, zero polyester. Set a reminder — the Asana dress sold out in 6 days last drop.</p><div class="tags">#resortwear #madeinbali #slowfashion</div></div>
+          <div class="caption"><span class="ctx">Craft reel</span><p>This linen spent three weeks on a loom in Sidemen before it spent one evening at your dinner table. From thread to hem in 20 seconds — the full journey, no shortcuts.</p><div class="tags">#balimade #naturaldye #consciousfashion</div></div>
+          <div class="caption"><span class="ctx">Styling reel</span><p>One sarong. Three ways. Beach to bar to breakfast — without touching your suitcase again. Which one are you? ↓</p><div class="tags">#capsulewardrobe #balistyle #sarongstyling</div></div>
+        </div>
+        <div class="card"><h4>Reel Concepts</h4>
+          <div class="reel"><span class="rl">Craft</span><div><b>Loom-to-linen process film, 20s</b><span>Macro shots, natural sound, no VO. The "how it's made" format consistently outperforms product shots 3:1 for artisan brands.</span></div></div>
+          <div class="reel"><span class="rl">Styling</span><div><b>"Styled 3 ways" series — one piece per week</b><span>Transition edits. Drives saves (planning purchases) and DM orders for specific pieces.</span></div></div>
+          <div class="reel"><span class="rl">Drop</span><div><b>Campaign reveal: 9 tiles post simultaneously</b><span>Grid takeover the morning of the drop — feed becomes a single lookbook image. Screenshot-bait.</span></div></div>
+        </div>
+        <div class="card"><h4>Reel Covers · 9:16</h4>
+          <div class="reelrow">
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:20</div><div class="rplay"></div><div class="rtxt"><b>Salt Air — the campaign film</b><span>▶ 41.2K · 2.3K saves</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1495385794356-15371f348c31?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:15</div><div class="rplay"></div><div class="rtxt"><b>One sarong, styled 3 ways</b><span>▶ 27.6K · 1.4K saves</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:24</div><div class="rplay"></div><div class="rtxt"><b>Behind the dye: natural indigo</b><span>▶ 15.9K · 720 shares</span></div></div>
+          </div>
+        </div>
+        <div class="card"><h4>90-Day Targets (Projected)</h4>
+          <div class="kpis"><div class="kpi"><b>+35%</b><span>DM orders</span></div><div class="kpi"><b>2×</b><span>saves / post</span></div><div class="kpi"><b>+50%</b><span>boutique visits</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ VILLA ══════════ -->
+  <div class="panel" id="p-villa">
+    <div class="brand-head">
+      <div class="logo-mark" style="background:#10362b;color:#d8c79a">K</div>
+      <div><h3>Villa Karsa</h3><div class="handle">@villakarsa.bali · Private pool villas — Umalas</div></div>
+    </div>
+    <p class="brand-pos">Positioning: <em>the villa your group chat argues over, then books.</em> Feed built to win the "send link" moment — when one person shares the profile and five people judge it in ten seconds. Every tile answers a booking objection.</p>
+    <div class="panel-grid">
+      <div class="phone">
+        <div class="ig-top">
+          <div class="ig-pfp" style="background:#10362b;color:#d8c79a">K</div>
+          <div class="ig-meta"><div class="u">villakarsa.bali</div><div class="b">3 private pool villas · Umalas<br>Direct booking = best rate · link below</div></div>
+        </div>
+        <div class="ig-stats"><div><b>156</b>posts</div><div><b>18,9k</b>followers</div><div><b>~5%</b>engagement</div></div>
+        <div class="grid9">
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk" style="color:#d8c79a">Reel · 0:25</div><div class="tt">Full villa tour — no wide-angle lies</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk" style="color:#d8c79a">Photo</div><div class="tt">Sunrise from the master suite</div></div>
+          <div class="tile txt" style="background:#10362b;color:#d8c79a"><div class="q">Book direct. Save 15%.</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk" style="color:#d8c79a">Guest story</div><div class="tt">"We extended twice." — fam of 5</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk" style="color:#e7dcc0">Reel · 0:18</div><div class="tt">Floating breakfast, 7am</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1573790387438-4da905039392?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="tk" style="color:#e7dcc0">Carousel</div><div class="tt">5 min from: cafés, gym, cliff walk</div></div>
+          <div class="tile txt" style="background:#e9e0c8;color:#10362b"><div class="q">"Quietest street in Umalas."</div></div>
+          <div class="tile" style="color:#fff"><img class="ph" src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=400&q=60" alt=""><div class="shade"></div><div class="play"></div><div class="tk" style="color:#d8c79a">Reel · 0:20</div><div class="tt">Night swim, frangipani, done</div></div>
+          <div class="tile" style="background:linear-gradient(160deg,#3b5c35,#1f3a1b)"><div class="tk" style="color:#e7dcc0">FAQ</div><div class="tt" style="color:#fff">Wifi speed, baby cot, scooters ↓</div></div>
+        </div>
+        <div class="cap">Concept grid · designed in brand palette</div>
+      </div>
+      <div class="cards">
+        <div class="card"><h4>Content Pillars</h4>
+          <div class="pillars">
+            <div class="pillar"><span class="pct">35%</span><b>Honest Tours</b><span>Real-lens walkthroughs. "No wide-angle lies" is the trust hook OTAs can't copy.</span></div>
+            <div class="pillar"><span class="pct">25%</span><b>Experience Moments</b><span>Float breakfasts, night swims, sunrise. The shareable, taggable dream layer.</span></div>
+            <div class="pillar"><span class="pct">20%</span><b>Direct-Booking Funnel</b><span>Rate comparison, availability, FAQ tiles. Cuts OTA commission per booking.</span></div>
+            <div class="pillar"><span class="pct">20%</span><b>Location Value</b><span>What's 5 minutes away. Sells the stay beyond the property line.</span></div>
+          </div>
+        </div>
+        <div class="card"><h4>Sample Captions</h4>
+          <div class="caption"><span class="ctx">Reel · Honest tour</span><p>Every villa looks huge with a wide-angle lens. So we filmed ours on a normal one. 25 seconds, every room, zero tricks — because the best review is "it looked exactly like Instagram."</p><div class="tags">#balivilla #umalas #villabali</div></div>
+            <div class="caption"><span class="ctx">Offer post</span><p>That booking site charges us 18% — and charges you the difference. Book direct through our link: same villa, 15% less, free airport pickup. The maths isn't hard. 🌴</p><div class="tags">#bookdirect #balivillarental</div></div>
+          <div class="caption"><span class="ctx">Guest story</span><p>The Hendersons booked 5 nights. Then 5 more. Then changed their flights. We're not saying the pool is hard to leave — but we've started keeping a "flight change" tally at reception.</p><div class="tags">#baliwithkids #familyvillabali</div></div>
+        </div>
+        <div class="card"><h4>Reel Concepts</h4>
+          <div class="reel"><span class="rl">Trust</span><div><b>"No wide-angle lies" honest tour series</b><span>One villa per reel, normal lens, room-by-room. Directly attacks the #1 booking fear.</span></div></div>
+          <div class="reel"><span class="rl">Dream</span><div><b>Golden-hour night swim, sound-on</b><span>Pure atmosphere, 18s loop. This is the reel that gets sent to the group chat.</span></div></div>
+          <div class="reel"><span class="rl">Objection</span><div><b>"Everything within 5 minutes" scooter POV</b><span>Café, gym, rice-field walk, minimart. Answers "but what's around it?" before it's asked.</span></div></div>
+        </div>
+        <div class="card"><h4>Reel Covers · 9:16</h4>
+          <div class="reelrow">
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:25</div><div class="rplay"></div><div class="rtxt"><b>Honest tour — filmed on a normal lens</b><span>▶ 38.7K · 1.9K shares</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:18</div><div class="rplay"></div><div class="rtxt"><b>Night swim. Sound on.</b><span>▶ 52.1K · 3.4K sends</span></div></div>
+            <div class="rcover"><img class="ph" src="https://images.unsplash.com/photo-1573790387438-4da905039392?auto=format&fit=crop&w=500&q=60" alt=""><div class="grad"></div><div class="rb">Reel · 0:20</div><div class="rplay"></div><div class="rtxt"><b>Everything within 5 minutes — POV</b><span>▶ 19.4K · 880 saves</span></div></div>
+          </div>
+        </div>
+        <div class="card"><h4>90-Day Targets (Projected)</h4>
+          <div class="kpis"><div class="kpi"><b>+40%</b><span>direct bookings</span></div><div class="kpi"><b>–25%</b><span>OTA dependency</span></div><div class="kpi"><b>3×</b><span>profile shares</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="shead"><span class="num">[ 02 ]</span><span class="line"></span><span class="lbl">Promo & Offer Design</span></div>
+  <div class="promogrid">
+    <div class="promo" style="background:#f2e8da;color:#3b2a1f">
+      <div class="ptop"><span class="pbadge" style="background:#c96f4a;color:#fff">New Menu</span><h5>Friday, 7am. <span class="serif-i">Twelve new dishes.</span></h5></div>
+      <div class="pbot"><div class="pdet">Brunch till 3pm · Every day<br>Jl. Pantai Batu Bolong</div><span class="pcta" style="background:#3b2a1f;color:#f2e8da">Save your table</span></div>
+    </div>
+    <div class="promo" style="background:#0a0a0a;color:#fff;border-color:rgba(255,77,46,.4)">
+      <div class="ptop"><span class="pbadge" style="background:#ff4d2e;color:#0a0a0a">Drop-In</span><h5>150K. All classes. <span class="serif-i" style="color:#ff4d2e">No excuses.</span></h5></div>
+      <div class="pbot"><div class="pdet">Mon–Sat · 6am–8pm · Berawa<br>Mats, chalk & showers included</div><span class="pcta" style="background:#ff4d2e;color:#0a0a0a">Book a class</span></div>
+    </div>
+    <div class="promo" style="background:#e9e2d5;color:#4a4334">
+      <div class="ptop"><span class="pbadge" style="border:1px solid #4a4334">Drop · 11.11</span><h5>Salt Air <span class="serif-i">arrives.</span></h5></div>
+      <div class="pbot"><div class="pdet">12 pieces · natural dye<br>Made in Bali · ships worldwide</div><span class="pcta" style="background:#3c372b;color:#e9e2d5">Preview the drop</span></div>
+    </div>
+    <div class="promo" style="background:#10362b;color:#e9e0c8">
+      <div class="ptop"><span class="pbadge" style="background:#d8c79a;color:#10362b">Direct Only</span><h5>Book direct. <span class="serif-i" style="color:#d8c79a">Save 15%.</span></h5></div>
+      <div class="pbot"><div class="pdet">Free airport pickup<br>Best-rate guarantee · Umalas</div><span class="pcta" style="background:#d8c79a;color:#10362b">Check dates</span></div>
+    </div>
+  </div>
+  <div class="promo-note">Designed feed & story graphics — every brand gets an offer system, not just pretty photos.</div>
+</section>
+
+<section class="wrap">
+  <div class="shead"><span class="num">[ 03 ]</span><span class="line"></span><span class="lbl">How the System Works</span></div>
+  <div class="sys">
+    <div class="card"><span class="step">[ 01 ] · Week 1</span><b>Audit & Direction</b><p>Account audit, competitor scan, positioning angle, brand palette and grid system. You approve one clear direction — not fifty moodboards.</p></div>
+    <div class="card"><span class="step">[ 02 ] · Week 2+</span><b>Production Sprint</b><p>Monthly content batch: reels shot & edited, designed tiles, captions EN/ES, hashtags and a posting calendar. AI-accelerated where it speeds things up, hand-crafted where craft matters.</p></div>
+    <div class="card"><span class="step">[ 03 ] · Monthly</span><b>Post, Measure, Sharpen</b><p>Scheduled publishing, performance report and iteration. What earned reach gets doubled; what didn't gets cut. No vanity metrics — DMs, visits, bookings.</p></div>
+  </div>
+</section>
+
+<div class="wrap"><div class="band">
+  <div><b>4</b><span>niche systems shown</span></div>
+  <div><b>12+</b><span>posts / month per brand</span></div>
+  <div><b>EN / ES</b><span>bilingual captions</span></div>
+  <div><b>300%</b><span>content velocity, AI-assisted</span></div>
+</div></div>
+
+<section class="cta wrap">
+  <h3>Your customers are already <span class="serif-i">scrolling.</span><br>Let's give them a reason to stop.</h3>
+  <p>If you run a café, gym, label or villa in Bali — I'll build you a one-month content system like the ones above, for your actual brand. First step is a free 15-minute look at your current profile.</p>
+  <div class="btns">
+    <a class="btn primary" href="https://portfolio-59f5b.web.app/#contact">Start a project →</a>
+    <a class="btn ghost" href="https://portfolio-59f5b.web.app/">View full portfolio ↗</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="mono">Jean-Paul Serrado · Digital Marketing Producer</span>
+    <span class="mono">Concept work — all brands fictional · V.2026</span>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+    t.classList.add('active');
+    document.getElementById('p-'+t.dataset.p).classList.add('show');
+  });
+});
+// tap-to-preview on reel covers (plays Ken Burns motion; swaps to real <video> automatically if one is present)
+document.querySelectorAll('.rcover').forEach(c=>{
+  const bar=document.createElement('div');bar.className='pbar';c.appendChild(bar);
+  const hint=document.createElement('div');hint.className='hint';hint.textContent='Tap to preview';c.appendChild(hint);
+  c.addEventListener('click',()=>{
+    const vid=c.querySelector('video');
+    if(vid){vid.paused?vid.play():vid.pause();c.classList.toggle('playing',!vid.paused);return}
+    const on=c.classList.toggle('playing');
+    if(on){document.querySelectorAll('.rcover.playing').forEach(o=>{if(o!==c)o.classList.remove('playing')})}
+  });
+});
+</script>
+</body>
+</html>

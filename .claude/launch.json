@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kosiuko",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "serve", "/Users/kosiuko/Downloads/kosiuko-portfolio/public", "-l", "4310"],
+      "port": 4310
+    }
+  ]
+}
